@@ -1,0 +1,26 @@
+service: studdyhub-backend-serverless
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  region: us-east-1
+  environment:
+    NODE_ENV: prod
+
+plugins:
+  - serverless-plugin-typescript
+  - serverless-offline
+
+package:
+  exclude:
+    - config/.env.dev
+  include:
+    - config/.env.prod
+
+functions:
+  healthCheck:
+    handler: app/handler.healthCheck
+    events:
+      - httpApi:
+          method: GET
+          path: /health-check

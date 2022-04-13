@@ -13,12 +13,6 @@ plugins:
   - serverless-plugin-typescript
   - serverless-offline
 
-package:
-  exclude:
-    - ./.env.dev
-  include:
-    - ./.env.prod
-
 functions:
   getAllCourses:
     handler: src/handler.getAllCourses

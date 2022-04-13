@@ -20,11 +20,11 @@ class Result {
   bodyToString() {
     return {
       statusCode: this.statusCode,
-      body: {
+      body: JSON.stringify({
         code: this.code,
         message: this.message,
         data: this.data,
-      },
+      }),
     };
   }
 }

@@ -19,9 +19,9 @@ package:
     - config/.env.prod
 
 functions:
-  healthCheck:
-    handler: app/handler.healthCheck
+  getAllCourses:
+    handler: src/handler.getAllCourses
     events:
       - httpApi:
           method: GET
-          path: /health-check
+          path: /courses

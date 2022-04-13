@@ -1,5 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import { ResponseDto } from "../common/dto";
+import { ResponseDto } from "../dto";
 
 class Result {
   private statusCode: number;

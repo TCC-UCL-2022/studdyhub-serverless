@@ -1,10 +1,10 @@
-export class ResponseBodyDto {
+export interface ResponseBodyDto {
   code: number;
   message: string;
   data?: object;
 }
 
-export class ResponseDto {
+export interface ResponseDto {
   statusCode: number;
   body: string;
 }

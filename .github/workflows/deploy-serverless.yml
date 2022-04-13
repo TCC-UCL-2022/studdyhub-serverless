@@ -3,7 +3,7 @@ on:
   push:
     branch: [master]
 jobs:
-  build:
+  deploy-to-aws:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -16,9 +16,9 @@ jobs:
           scope: "@octocat"
       - name: Install Serverless globally 🌍
         run: npm install -g serverless
-      - name: Setup Serverless credentials
+      - name: Setup Serverless credentials 🔒
         run: serverless config credentials --provider aws --key ${{ secrets.AWS_ACCESS_KEY }} --secret ${{ secrets.AWS_SECRET_ACCESS_KEY }} --profile serverlessUser
-      - name: Install dependencies and build 🔧
+      - name: Install dependencies 🔧
         run: yarn
       - name: Deploy functions to AWS 📦
         run: yarn deploy

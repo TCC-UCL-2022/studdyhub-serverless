@@ -20,17 +20,17 @@ class Result {
   bodyToString() {
     return {
       statusCode: this.statusCode,
-      body: JSON.stringify({
+      body: {
         code: this.code,
         message: this.message,
         data: this.data,
-      }),
+      },
     };
   }
 }
 
 export class MessageUtil {
-  static success(data: object): ResponseDto {
+  static success(data?: object | string): ResponseDto {
     const result = new Result(StatusCodes.OK, 0, "success", data);
 
     return result.bodyToString();

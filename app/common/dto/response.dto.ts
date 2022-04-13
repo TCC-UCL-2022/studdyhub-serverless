@@ -6,5 +6,5 @@ export class ResponseBodyDto {
 
 export class ResponseDto {
   statusCode: number;
-  body: string;
+  body: ResponseBodyDto;
 }

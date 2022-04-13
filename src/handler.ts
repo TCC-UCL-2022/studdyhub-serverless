@@ -1,6 +1,6 @@
 import { Handler } from "aws-lambda";
 
-import { CourseController } from "./modules";
+import { CourseController } from "./modules/course";
 
 const courseController = new CourseController();
 

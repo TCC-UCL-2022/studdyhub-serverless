@@ -1,18 +1,12 @@
-import { config } from "dotenv";
-import { join } from "path";
-
-config({
-  path: join(__dirname, "../", `config/.env.${process.env.NODE_ENV}`),
-});
-
-const getEnvironmentVariable = (name: string): string => {
+function getEnvironmentVariable(name: string): string {
   const value = process.env[name];
-  if (!value) {
-    throw new Error(`Environment variable ${name} is not set`);
+
+  if (value === undefined) {
+    throw new Error(`Environment variable ${name} is not defined.`);
   }
 
   return value;
-};
+}
 
 export const environments = {
   DB_HOST: getEnvironmentVariable("DB_HOST"),

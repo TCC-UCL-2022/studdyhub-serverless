@@ -1,7 +1,7 @@
 import { Column, Entity, ManyToOne, OneToMany } from "typeorm";
-import { ActivityEntity } from "src/modules/activity";
-import { BaseCollection } from "src/common/base-entities";
-import { CourseEntity } from "src/modules/course";
+import { BaseCollection } from "../../common/base-entities";
+import { ActivityEntity } from "../activity";
+import { CourseEntity } from "../course";
 
 @Entity("section")
 export class SectionEntity extends BaseCollection {

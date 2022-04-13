@@ -1,12 +1,13 @@
 service: studdyhub-backend-serverless
 
+useDotenv: true
+
 provider:
   name: aws
   runtime: nodejs14.x
   region: us-east-1
   profile: serverlessUser
-  environment:
-    NODE_ENV: prod
+  stage: ${opt:stage, 'dev'}
 
 plugins:
   - serverless-plugin-typescript
@@ -14,9 +15,9 @@ plugins:
 
 package:
   exclude:
-    - config/.env.dev
+    - ./.env.dev
   include:
-    - config/.env.prod
+    - ./.env.prod
 
 functions:
   getAllCourses:

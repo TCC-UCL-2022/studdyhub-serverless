@@ -3,12 +3,9 @@
     "experimentalDecorators": true,
     "target": "es2017",
     "module": "commonjs",
-    "outDir": "./lib",
-    "rootDir": ".",
     "lib": ["ES6"],
     "strict": true,
-    "esModuleInterop": true,
-    "baseUrl": "."
+    "esModuleInterop": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "./lib"],

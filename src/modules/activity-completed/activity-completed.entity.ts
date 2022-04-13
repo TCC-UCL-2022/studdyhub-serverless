@@ -1,7 +1,7 @@
 import { Column, Entity, ManyToOne } from "typeorm";
-import { ActivityEntity } from "src/modules/activity";
-import { BaseCollection } from "src/common/base-entities";
-import { StudentCourseEntity } from "src/modules/student-course";
+import { BaseCollection } from "../../common/base-entities";
+import { ActivityEntity } from "../activity";
+import { StudentCourseEntity } from "../student-course";
 
 @Entity("activity_completed")
 export class ActivityCompletedEntity extends BaseCollection {

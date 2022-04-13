@@ -1,6 +1,6 @@
 import { Entity, OneToMany } from "typeorm";
-import { UserBaseEntity } from "src/common/base-entities";
-import { CourseEntity } from "src/modules/course";
+import { UserBaseEntity } from "../../common/base-entities";
+import { CourseEntity } from "../course";
 
 @Entity("teacher")
 export class TeacherEntity extends UserBaseEntity {

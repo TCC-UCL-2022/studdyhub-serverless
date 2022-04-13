@@ -1,5 +1,14 @@
 import { DataSource } from "typeorm";
-import { environments } from "src/config/environment";
+import {
+  ActivityCompletedEntity,
+  ActivityEntity,
+  CourseEntity,
+  SectionEntity,
+  StudentCourseEntity,
+  StudentEntity,
+  TeacherEntity,
+} from "../../modules";
+import { environments } from "../environment";
 
 export const dataSource = new DataSource({
   name: "studdyhub",
@@ -10,5 +19,13 @@ export const dataSource = new DataSource({
   password: environments.DB_PASSWORD,
   database: environments.DB_NAME,
   synchronize: true,
-  entities: [__dirname + "/../modules/*/*.entity.ts"],
+  entities: [
+    ActivityCompletedEntity,
+    ActivityEntity,
+    CourseEntity,
+    SectionEntity,
+    StudentCourseEntity,
+    StudentEntity,
+    TeacherEntity,
+  ],
 });

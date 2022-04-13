@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "local": "serverless offline",
-    "deploy": "serverless deploy"
+    "deploy": "serverless deploy --stage prod"
   },
   "repository": {
     "type": "git",

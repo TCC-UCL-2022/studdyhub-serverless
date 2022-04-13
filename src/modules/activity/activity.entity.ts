@@ -1,8 +1,8 @@
-import { ActivityType } from "src/common/enums";
 import { Column, Entity, ManyToOne, OneToMany } from "typeorm";
-import { ActivityCompletedEntity } from "src/modules/activity-completed";
-import { BaseCollection } from "src/common/base-entities";
-import { SectionEntity } from "src/modules/section";
+import { BaseCollection } from "../../common/base-entities";
+import { ActivityType } from "../../common/enums";
+import { ActivityCompletedEntity } from "../activity-completed";
+import { SectionEntity } from "../section";
 
 @Entity("activity")
 export class ActivityEntity extends BaseCollection {

@@ -1,6 +1,8 @@
 import { Handler } from "aws-lambda";
+import { dataSource } from "./config/database";
+import { CourseController } from "./modules";
 
-import { CourseController } from "./modules/course";
+dataSource.initialize();
 
 const courseController = new CourseController();
 

@@ -1,0 +1,26 @@
+name: Deploy API Serverless
+on:
+  push:
+    branch: [master]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      # Setup .npmrc file to publish to npm
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "16.x"
+          registry-url: "https://registry.npmjs.org"
+          # Defaults to the user or organization that owns the workflow file
+          scope: "@octocat"
+      - name: Install Serverless globally 🌍
+        run: npm install -g serverless
+      - name: Setup Serverless credentials
+        run: serverless config credentials --provider aws --key ${{ secrets.AWS_ACCESS_KEY }} --secret ${{ secrets.AWS_SECRET_ACCESS_KEY }} --profile serverlessUser
+      - name: Install dependencies and build 🔧
+        run: yarn
+      - name: Deploy functions to AWS 📦
+        run: yarn deploy
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -1,4 +1,4 @@
-service: studdyhub-backend-serverless
+service: studdyhub-serverless
 
 useDotenv: true
 
@@ -8,6 +8,12 @@ provider:
   region: us-east-1
   profile: serverlessUser
   stage: ${opt:stage, 'dev'}
+  environment:
+    DB_HOST: ${env:DB_HOST}
+    DB_PORT: ${env:DB_PORT}
+    DB_NAME: ${env:DB_NAME}
+    DB_USERNAME: ${env:DB_USERNAME}
+    DB_PASSWORD: ${env:DB_PASSWORD}
 
 plugins:
   - serverless-plugin-typescript

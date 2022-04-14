@@ -15,10 +15,11 @@ export class CourseController {
     event
   ) => {
     try {
-      const { skip, take, orderBy, orderDirection } =
+      const { query, skip, take, orderBy, orderDirection } =
         event.queryStringParameters;
 
       const courses = await this.courseService.getAllCourses({
+        query,
         skip,
         take,
         orderBy,

@@ -1,4 +1,4 @@
-import { Repository } from "typeorm";
+import { Like, Repository } from "typeorm";
 import { GetManyResponseDto } from "../../common/dto";
 import { BaseService } from "../../common/services";
 import { dataSource } from "../../config/database";
@@ -14,6 +14,7 @@ export class CourseService extends BaseService {
   }
 
   public async getAllCourses({
+    query,
     skip,
     take,
     orderBy,
@@ -24,6 +25,8 @@ export class CourseService extends BaseService {
     const [items, count] = await this.courseRepository.findAndCount({
       where: {
         active: true,
+        title: query && Like(`%${query}%`),
+        description: query && Like(`%${query}%`),
       },
       skip,
       take,

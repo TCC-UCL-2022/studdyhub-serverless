@@ -1,3 +1,5 @@
 import { GetAllRequestDto } from "../../../../common/dto";
 
-export interface GetCoursesRequestDto extends GetAllRequestDto {}
+export interface GetCoursesRequestDto extends GetAllRequestDto {
+  query?: string;
+}

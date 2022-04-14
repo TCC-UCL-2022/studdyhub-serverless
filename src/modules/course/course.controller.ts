@@ -1,6 +1,5 @@
 import { Handler } from "aws-lambda";
 import { MessageUtil } from "../../common/utils";
-import { dataSource } from "../../config/database";
 import { CourseService } from "./course.service";
 
 export class CourseController {
@@ -11,10 +10,8 @@ export class CourseController {
   }
 
   getAllCourses: Handler = async () => {
-    await dataSource.initialize();
-
     try {
-      const courses = await this.courseService.getAllCourses();
+      const courses = await this.courseService.getAllCourses({});
 
       return MessageUtil.success(courses);
     } catch (err: any) {

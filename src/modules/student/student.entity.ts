@@ -1,5 +1,5 @@
 import { Entity, OneToMany } from "typeorm";
-import { UserBaseEntity } from "../../common/base-entities";
+import { UserBaseEntity } from "../../common/entities";
 import { StudentCourseEntity } from "../student-course";
 
 @Entity("student")

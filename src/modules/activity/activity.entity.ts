@@ -1,5 +1,5 @@
 import { Column, Entity, ManyToOne, OneToMany } from "typeorm";
-import { BaseCollection } from "../../common/base-entities";
+import { BaseCollection } from "../../common/entities";
 import { ActivityType } from "../../common/enums";
 import { ActivityCompletedEntity } from "../activity-completed";
 import { SectionEntity } from "../section";

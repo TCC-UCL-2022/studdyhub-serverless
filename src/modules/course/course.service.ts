@@ -1,4 +1,5 @@
 import { Repository } from "typeorm";
+import { GetManyResponseDto } from "../../common/dto";
 import { BaseService } from "../../common/services";
 import { dataSource } from "../../config/database";
 import { CourseEntity } from "./course.entity";
@@ -17,13 +18,10 @@ export class CourseService extends BaseService {
     take,
     orderBy,
     orderDirection,
-  }: GetCoursesRequestDto): Promise<{
-    courses: CourseEntity[];
-    count: number;
-  }> {
+  }: GetCoursesRequestDto): Promise<GetManyResponseDto<CourseEntity>> {
     await this.loadDatabase();
 
-    const [courses, count] = await this.courseRepository.findAndCount({
+    const [items, count] = await this.courseRepository.findAndCount({
       where: {
         active: true,
       },
@@ -37,7 +35,7 @@ export class CourseService extends BaseService {
     });
 
     return {
-      courses,
+      items,
       count,
     };
   }

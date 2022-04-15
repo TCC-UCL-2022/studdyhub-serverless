@@ -1,16 +1,13 @@
 import { StatusCodes } from "http-status-codes";
 import { ResponseDto } from "../dto";
+import { ResponseError } from "../errors";
 
 class Result {
   private statusCode: number;
-  private code: string;
-  private message: string;
   private data?: any;
 
-  constructor(statusCode: number, code: string, message: string, data?: any) {
+  constructor(statusCode: number, data?: string | object) {
     this.statusCode = statusCode;
-    this.code = code;
-    this.message = message;
     this.data = data;
   }
 
@@ -20,30 +17,31 @@ class Result {
   bodyToString() {
     return {
       statusCode: this.statusCode,
-      body: JSON.stringify({
-        code: this.code,
-        message: this.message,
-        data: this.data,
-      }),
+      body: JSON.stringify(this.data),
     };
   }
 }
 
 export class MessageUtil {
-  static success(data?: object | string): ResponseDto {
-    const result = new Result(StatusCodes.OK, "ok", "success", data);
+  static success(data: any): ResponseDto {
+    const result = new Result(StatusCodes.OK, data);
 
     return result.bodyToString();
   }
 
-  static error(
-    statusCode: number = StatusCodes.INTERNAL_SERVER_ERROR,
-    code: string,
-    message: string
-  ) {
-    const result = new Result(statusCode, code, message);
+  static error(error: unknown): ResponseDto {
+    let result: Result;
 
-    console.log(result.bodyToString());
+    if (error instanceof ResponseError) {
+      result = new Result(error.httpStatus, {
+        error: error.message,
+      });
+    } else {
+      result = new Result(StatusCodes.INTERNAL_SERVER_ERROR, {
+        error: (error as any).message || "Internal Server Error",
+      });
+    }
+
     return result.bodyToString();
   }
 }

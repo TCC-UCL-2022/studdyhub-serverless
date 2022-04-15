@@ -9,13 +9,15 @@ export class CourseEntity extends BaseCollection {
   @Column({ name: "title", type: "varchar", length: 255 })
   title!: string;
 
-  @Column({ name: "description", type: "varchar", length: 255 })
+  @Column({ name: "description", type: "varchar" })
   description!: string;
 
   @Column({ name: "published", type: "boolean", default: false })
   published!: boolean;
 
-  @ManyToOne((type) => TeacherEntity, (teacher) => teacher.courses)
+  @ManyToOne((type) => TeacherEntity, (teacher) => teacher.courses, {
+    nullable: false,
+  })
   teacher!: TeacherEntity;
 
   @OneToMany((type) => SectionEntity, (section) => section.course)

@@ -1,16 +1,20 @@
 import { Like, Repository } from "typeorm";
 import { GetManyResponseDto } from "../../common/dto";
+import { BadRequestError } from "../../common/errors";
 import { BaseService } from "../../common/services";
 import { dataSource } from "../../config/database";
+import { TeacherEntity } from "../teacher";
 import { CourseEntity } from "./course.entity";
 import { GetCoursesRequestDto } from "./dto/request";
 
 export class CourseService extends BaseService {
   courseRepository: Repository<CourseEntity>;
+  teacherRepository: Repository<TeacherEntity>;
 
   constructor() {
     super();
     this.courseRepository = dataSource.getRepository(CourseEntity);
+    this.teacherRepository = dataSource.getRepository(TeacherEntity);
   }
 
   public async getAllCourses({
@@ -52,5 +56,21 @@ export class CourseService extends BaseService {
         active: true,
       },
     });
+  }
+
+  public async createCourse(course: CourseEntity): Promise<CourseEntity> {
+    await this.loadDatabase();
+
+    const teacher = await this.teacherRepository.findOne({
+      where: {
+        id: `${course.teacher}`,
+      },
+    });
+
+    if (!teacher) {
+      throw new BadRequestError("Teacher not found");
+    }
+
+    return await this.courseRepository.save(course);
   }
 }

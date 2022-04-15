@@ -9,7 +9,7 @@ export class ActivityEntity extends BaseCollection {
   @Column({ name: "title", type: "varchar", length: 255 })
   title!: string;
 
-  @Column({ name: "description", type: "varchar", length: 500 })
+  @Column({ name: "description", type: "varchar" })
   description!: string;
 
   @Column({ name: "url", type: "varchar", length: 255 })

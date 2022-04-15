@@ -40,3 +40,10 @@ functions:
       - httpApi:
           method: POST
           path: /courses
+
+  updateCourse:
+    handler: src/handler.updateCourse
+    events:
+      - httpApi:
+          method: PATCH
+          path: /courses/{id}

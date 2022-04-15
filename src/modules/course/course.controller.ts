@@ -31,8 +31,6 @@ export class CourseController {
 
       return MessageUtil.success({ items, count });
     } catch (err) {
-      console.error(err);
-
       return MessageUtil.error(err);
     }
   };
@@ -48,21 +46,36 @@ export class CourseController {
       }
 
       return MessageUtil.success(course);
-    } catch (err: any) {
-      console.error(err);
-
+    } catch (err) {
       return MessageUtil.error(err);
     }
   };
 
   createCourse: Handler<HandlerEvent> = async (event) => {
     try {
-      const payload = JSON.parse(event.body) as CourseEntity;
+      const payload: CourseEntity = JSON.parse(event.body);
 
       const course = await this.courseService.createCourse(payload);
 
       return MessageUtil.success(course);
-    } catch (err: any) {
+    } catch (err) {
+      return MessageUtil.error(err);
+    }
+  };
+
+  updateCourse: Handler<HandlerEvent<{ id: string }>> = async (event) => {
+    try {
+      const { id } = event.pathParameters;
+      const payload: Partial<CourseEntity> = JSON.parse(event.body);
+
+      const course = await this.courseService.updateCourse(id, payload);
+
+      if (!course) {
+        throw new NotFoundError("Course not found");
+      }
+
+      return MessageUtil.success(course);
+    } catch (err) {
       return MessageUtil.error(err);
     }
   };

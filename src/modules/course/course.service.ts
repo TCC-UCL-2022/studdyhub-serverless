@@ -1,20 +1,20 @@
 import { Like, Repository } from "typeorm";
 import { GetManyResponseDto } from "../../common/dto";
-import { BadRequestError } from "../../common/errors";
+import { BadRequestError, NotFoundError } from "../../common/errors";
 import { BaseService } from "../../common/services";
 import { dataSource } from "../../config/database";
-import { TeacherEntity } from "../teacher";
+import { TeacherEntity, TeacherService } from "../teacher";
 import { CourseEntity } from "./course.entity";
 import { GetCoursesRequestDto } from "./dto/request";
 
 export class CourseService extends BaseService {
   courseRepository: Repository<CourseEntity>;
-  teacherRepository: Repository<TeacherEntity>;
+  teacherService: TeacherService;
 
   constructor() {
     super();
     this.courseRepository = dataSource.getRepository(CourseEntity);
-    this.teacherRepository = dataSource.getRepository(TeacherEntity);
+    this.teacherService = new TeacherService();
   }
 
   public async getAllCourses({
@@ -61,16 +61,42 @@ export class CourseService extends BaseService {
   public async createCourse(course: CourseEntity): Promise<CourseEntity> {
     await this.loadDatabase();
 
-    const teacher = await this.teacherRepository.findOne({
-      where: {
-        id: `${course.teacher}`,
-      },
-    });
+    const teacher = await this.teacherService.getTeacherById(
+      `${course.teacher}`
+    );
 
     if (!teacher) {
       throw new BadRequestError("Teacher not found");
     }
 
     return await this.courseRepository.save(course);
+  }
+
+  public async updateCourse(
+    id: string,
+    course: Partial<CourseEntity>
+  ): Promise<CourseEntity | null> {
+    await this.loadDatabase();
+
+    const courseFound = await this.getCourseById(id);
+
+    if (!courseFound) {
+      throw new NotFoundError("Course not found");
+    }
+
+    if (course.teacher) {
+      const teacher = await this.teacherService.getTeacherById(
+        `${course.teacher}`
+      );
+
+      if (!teacher) {
+        throw new BadRequestError("Teacher not found");
+      }
+    }
+
+    return await this.courseRepository.save({
+      ...course,
+      id,
+    });
   }
 }

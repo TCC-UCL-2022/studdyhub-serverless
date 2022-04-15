@@ -1,4 +1,4 @@
-export interface GetAllRequestDto {
+export interface GetManyRequestDto {
   take?: number;
   skip?: number;
   orderBy?: string;

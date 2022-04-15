@@ -18,7 +18,7 @@ export class CourseController {
     event
   ) => {
     try {
-      const { query, skip, take, orderBy, orderDirection } =
+      const { query, skip, take, orderBy, orderDirection, loadTeacher } =
         event.queryStringParameters || {};
 
       const { items, count } = await this.courseService.getAllCourses({
@@ -27,6 +27,7 @@ export class CourseController {
         take,
         orderBy,
         orderDirection,
+        loadTeacher,
       });
 
       return MessageUtil.success({ items, count });

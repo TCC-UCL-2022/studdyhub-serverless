@@ -1,9 +1,16 @@
 import { dataSource } from "./config/database";
-import { CourseController } from "./modules";
+import { CourseController, TeacherController } from "./modules";
 
 dataSource.initialize();
 
-const { getAllCourses, getCourseById, createCourse, updateCourse } =
+const { createCourse, getAllCourses, getCourseById, updateCourse } =
   new CourseController();
+const { createTeacher } = new TeacherController();
 
-export { getAllCourses, getCourseById, createCourse, updateCourse };
+export = {
+  createCourse,
+  getAllCourses,
+  getCourseById,
+  updateCourse,
+  createTeacher,
+};

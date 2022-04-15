@@ -47,3 +47,10 @@ functions:
       - httpApi:
           method: PATCH
           path: /courses/{id}
+
+  createteacher:
+    handler: src/handler.createTeacher
+    events:
+      - httpApi:
+          method: POST
+          path: /teachers

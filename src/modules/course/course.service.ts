@@ -23,6 +23,7 @@ export class CourseService extends BaseService {
     take,
     orderBy,
     orderDirection,
+    loadTeacher = false,
   }: GetCoursesRequestDto): Promise<GetManyResponseDto<CourseEntity>> {
     await this.loadDatabase();
 
@@ -39,6 +40,7 @@ export class CourseService extends BaseService {
           [orderBy]: orderDirection ?? "ASC",
         }),
       },
+      relations: loadTeacher ? ["teacher"] : [],
     });
 
     return {

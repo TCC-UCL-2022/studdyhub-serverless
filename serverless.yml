@@ -48,7 +48,7 @@ functions:
           method: PATCH
           path: /courses/{id}
 
-  createteacher:
+  createTeacher:
     handler: src/modules/teacher/handler.createTeacher
     events:
       - httpApi:

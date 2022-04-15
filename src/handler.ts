@@ -3,6 +3,6 @@ import { CourseController } from "./modules";
 
 dataSource.initialize();
 
-const { getAllCourses } = new CourseController();
+const { getAllCourses, getCourseById } = new CourseController();
 
-export { getAllCourses };
+export { getAllCourses, getCourseById };

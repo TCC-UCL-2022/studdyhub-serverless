@@ -42,4 +42,15 @@ export class CourseService extends BaseService {
       count,
     };
   }
+
+  public async getCourseById(id: string): Promise<CourseEntity | null> {
+    await this.loadDatabase();
+
+    return await this.courseRepository.findOne({
+      where: {
+        id,
+        active: true,
+      },
+    });
+  }
 }

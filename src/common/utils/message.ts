@@ -3,11 +3,11 @@ import { ResponseDto } from "../dto";
 
 class Result {
   private statusCode: number;
-  private code: number;
+  private code: string;
   private message: string;
   private data?: any;
 
-  constructor(statusCode: number, code: number, message: string, data?: any) {
+  constructor(statusCode: number, code: string, message: string, data?: any) {
     this.statusCode = statusCode;
     this.code = code;
     this.message = message;
@@ -31,14 +31,14 @@ class Result {
 
 export class MessageUtil {
   static success(data?: object | string): ResponseDto {
-    const result = new Result(StatusCodes.OK, 0, "success", data);
+    const result = new Result(StatusCodes.OK, "ok", "success", data);
 
     return result.bodyToString();
   }
 
   static error(
     statusCode: number = StatusCodes.INTERNAL_SERVER_ERROR,
-    code: number = 1000,
+    code: string,
     message: string
   ) {
     const result = new Result(statusCode, code, message);

@@ -1,5 +1,5 @@
 export interface ResponseBodyDto {
-  code: number;
+  code: string;
   message: string;
   data?: object;
 }

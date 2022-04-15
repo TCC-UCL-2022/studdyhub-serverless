@@ -26,3 +26,9 @@ functions:
       - httpApi:
           method: GET
           path: /courses
+  getCourseById:
+    handler: src/handler.getCourseById
+    events:
+      - httpApi:
+          method: GET
+          path: /courses/{id}

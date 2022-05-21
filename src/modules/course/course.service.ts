@@ -60,14 +60,19 @@ export class CourseService extends BaseService {
     });
   }
 
-  public async createCourse(course: CreateCourseDto): Promise<Course> {
+  public async createCourse(payload: CreateCourseDto): Promise<Course> {
     await this.loadDatabase();
 
-    const user = await this.userService.getUserById(course.userId);
+    const user = await this.userService.getUserById(payload.userId);
 
     if (!user) {
       throw new BadRequestError("User not found");
     }
+
+    const course = new Course();
+    course.title = payload.title;
+    course.description = payload.description;
+    course.user = user;
 
     return await this.courseRepository.save(course);
   }

@@ -1,29 +1,29 @@
 import { Column, Entity, ManyToOne, OneToMany } from "typeorm";
 import { BaseCollection } from "../../common/entities";
 import { ActivityType } from "../../common/enums";
-import { ActivityCompletedEntity } from "../activity-completed";
+import { ActivityProgress } from "../activity-progress";
 import { CourseEntity } from "../course";
 
 @Entity("activity")
-export class ActivityEntity extends BaseCollection {
+export class Activity extends BaseCollection {
   @Column({ name: "title", type: "varchar", length: 255 })
-  title!: string;
+  title: string;
 
   @Column({ name: "description", type: "varchar" })
-  description!: string;
+  description: string;
 
-  @Column({ name: "url", type: "varchar", length: 255 })
-  url!: string;
+  @Column({ name: "link", type: "varchar", length: 255 })
+  link: string;
 
   @Column({ type: "enum", enum: ActivityType, default: ActivityType.VIDEO })
-  type!: ActivityType;
+  type: ActivityType;
 
   @ManyToOne(() => CourseEntity, (course) => course.activities)
-  course!: CourseEntity;
+  course: CourseEntity;
 
   @OneToMany(
-    () => ActivityCompletedEntity,
-    (activityCompleted) => activityCompleted.activity
+    () => ActivityProgress,
+    (activityProgress) => activityProgress.activity
   )
-  completed!: ActivityCompletedEntity[];
+  activityProgress: ActivityProgress[];
 }

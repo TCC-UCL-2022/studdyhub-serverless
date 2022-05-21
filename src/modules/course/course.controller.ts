@@ -4,7 +4,7 @@ import { HandlerEvent } from "../../common/types";
 import { MessageUtil } from "../../common/utils";
 import { CourseEntity } from "./course.entity";
 import { CourseService } from "./course.service";
-import { GetCoursesRequestDto } from "./dto/request";
+import { CreateCourseDto, GetCoursesRequestDto } from "./dto";
 
 export class CourseController {
   private courseService: CourseService;
@@ -43,9 +43,9 @@ export class CourseController {
     }
   };
 
-  createCourse: Handler<HandlerEvent> = async (event) => {
+  createCourse: Handler<HandlerEvent<CreateCourseDto>> = async (event) => {
     try {
-      const payload: CourseEntity = JSON.parse(event.body);
+      const payload: CreateCourseDto = JSON.parse(event.body);
 
       const course = await this.courseService.createCourse(payload);
 

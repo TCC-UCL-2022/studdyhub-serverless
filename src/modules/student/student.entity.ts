@@ -1,12 +1,16 @@
 import { Entity, OneToMany } from "typeorm";
 import { UserBaseEntity } from "../../common/entities";
-import { StudentCourseEntity } from "../student-course";
+import { ActivityProgress } from "../activity-progress";
+import { Enrollment } from "../enrollment";
 
 @Entity("student")
-export class StudentEntity extends UserBaseEntity {
+export class Student extends UserBaseEntity {
+  @OneToMany(() => Enrollment, (enrollment) => enrollment.student)
+  enrollments: Enrollment[];
+
   @OneToMany(
-    (type) => StudentCourseEntity,
-    (studentCourse) => studentCourse.student
+    () => ActivityProgress,
+    (activityProgress) => activityProgress.student
   )
-  courses!: StudentCourseEntity[];
+  activityProgress: ActivityProgress[];
 }

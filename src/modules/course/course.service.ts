@@ -5,7 +5,7 @@ import { BaseService } from "../../common/services";
 import { dataSource } from "../../config/database";
 import { TeacherService } from "../teacher";
 import { CourseEntity } from "./course.entity";
-import { GetCoursesRequestDto } from "./dto/request";
+import { CreateCourseDto, GetCoursesRequestDto } from "./dto";
 
 export class CourseService extends BaseService {
   courseRepository: Repository<CourseEntity>;
@@ -60,12 +60,10 @@ export class CourseService extends BaseService {
     });
   }
 
-  public async createCourse(course: CourseEntity): Promise<CourseEntity> {
+  public async createCourse(course: CreateCourseDto): Promise<CourseEntity> {
     await this.loadDatabase();
 
-    const teacher = await this.teacherService.getTeacherById(
-      `${course.teacher}`
-    );
+    const teacher = await this.teacherService.getTeacherById(course.teacherId);
 
     if (!teacher) {
       throw new BadRequestError("Teacher not found");

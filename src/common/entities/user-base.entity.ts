@@ -3,8 +3,8 @@ import { BaseCollection } from "./base-collection.entity";
 
 export class UserBaseEntity extends BaseCollection {
   @Column({ name: "name", type: "varchar", length: 255, nullable: false })
-  name!: string;
+  name: string;
 
   @Column({ name: "email", type: "varchar", length: 255, nullable: false })
-  email!: string;
+  email: string;
 }

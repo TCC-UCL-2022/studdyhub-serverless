@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import { DataSource } from "typeorm";
 import {
   ActivityCompletedEntity,
@@ -19,6 +20,7 @@ export const dataSource = new DataSource({
   password: environments.DB_PASSWORD,
   database: environments.DB_NAME,
   synchronize: true,
+  logger: "debug",
   entities: [
     ActivityCompletedEntity,
     ActivityEntity,

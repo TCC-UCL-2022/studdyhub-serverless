@@ -1,9 +1,7 @@
-import { Like, Repository } from "typeorm";
-import { GetManyResponseDto } from "../../common/dto";
+import { Repository } from "typeorm";
 import { NotFoundError } from "../../common/errors";
 import { BaseService } from "../../common/services";
 import { dataSource } from "../../config/database";
-import { GetTeachersRequestDto } from "./dto/request";
 import { TeacherEntity } from "./teacher.entity";
 
 export class TeacherService extends BaseService {
@@ -12,35 +10,6 @@ export class TeacherService extends BaseService {
   constructor() {
     super();
     this.teacherRepository = dataSource.getRepository(TeacherEntity);
-  }
-
-  public async getAllTeachers({
-    query,
-    skip,
-    take,
-    orderBy,
-    orderDirection,
-  }: GetTeachersRequestDto): Promise<GetManyResponseDto<TeacherEntity>> {
-    await this.loadDatabase();
-
-    const [teachers, count] = await this.teacherRepository.findAndCount({
-      where: {
-        active: true,
-        name: query && Like(`%${query}%`),
-      },
-      skip,
-      take,
-      order: {
-        ...(orderBy && {
-          [orderBy]: orderDirection ?? "ASC",
-        }),
-      },
-    });
-
-    return {
-      items: teachers,
-      count,
-    };
   }
 
   public async getTeacherById(id: string): Promise<TeacherEntity | null> {

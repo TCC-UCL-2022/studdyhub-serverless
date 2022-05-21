@@ -2,7 +2,6 @@ import { Handler } from "aws-lambda";
 import { NotFoundError } from "../../common/errors";
 import { HandlerEvent } from "../../common/types";
 import { MessageUtil } from "../../common/utils";
-import { GetTeachersRequestDto } from "./dto/request";
 import { TeacherEntity } from "./teacher.entity";
 import { TeacherService } from "./teacher.service";
 
@@ -12,27 +11,6 @@ export class TeacherController {
   constructor() {
     this.teacherService = new TeacherService();
   }
-
-  getAllTeachers: Handler<HandlerEvent<GetTeachersRequestDto>> = async (
-    event
-  ) => {
-    try {
-      const { query, skip, take, orderBy, orderDirection } =
-        event.queryStringParameters || {};
-
-      const result = await this.teacherService.getAllTeachers({
-        query,
-        skip,
-        take,
-        orderBy,
-        orderDirection,
-      });
-
-      return MessageUtil.success(result);
-    } catch (err) {
-      return MessageUtil.error(err);
-    }
-  };
 
   getTeacherById: Handler<HandlerEvent<{ id: string }>> = async (event) => {
     try {

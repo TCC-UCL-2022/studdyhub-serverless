@@ -1,5 +1,5 @@
-export interface HandlerEvent<Q = {}, P = undefined> {
-  queryStringParameters: Q;
-  pathParameters: P extends undefined ? Q : P;
+export interface HandlerEvent<T = {}> {
+  queryStringParameters: T;
+  pathParameters: T;
   body: any;
 }

@@ -5,10 +5,10 @@
     "module": "commonjs",
     "lib": ["ES6"],
     "strict": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "emitDecoratorMetadata": true,
+    "strictPropertyInitialization": false
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "./lib"],
-  "experimentalDecorators": true,
-  "emitDecoratorMetadata": true
+  "exclude": ["node_modules", "./lib"]
 }

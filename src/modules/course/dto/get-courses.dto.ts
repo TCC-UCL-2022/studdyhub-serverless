@@ -1,4 +1,4 @@
-import { GetManyRequestDto } from "../../../../common/dto";
+import { GetManyRequestDto } from "../../../common/dto";
 
 export interface GetCoursesRequestDto extends GetManyRequestDto {
   query?: string;

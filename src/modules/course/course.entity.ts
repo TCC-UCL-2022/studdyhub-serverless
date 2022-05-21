@@ -1,31 +1,28 @@
 import { Column, Entity, ManyToOne, OneToMany } from "typeorm";
 import { BaseCollection } from "../../common/entities";
-import { ActivityEntity } from "../activity";
-import { StudentCourseEntity } from "../student-course";
+import { Activity } from "../activity";
+import { Enrollment } from "../enrollment";
 import { TeacherEntity } from "../teacher";
 
 @Entity("course")
 export class CourseEntity extends BaseCollection {
   @Column({ name: "title", type: "varchar", length: 255 })
-  title!: string;
+  title: string;
 
   @Column({ name: "description", type: "varchar" })
-  description!: string;
+  description: string;
 
   @Column({ name: "published", type: "boolean", default: false })
-  published!: boolean;
+  published: boolean;
 
   @ManyToOne(() => TeacherEntity, (teacher) => teacher.courses, {
     nullable: false,
   })
-  teacher!: TeacherEntity;
+  teacher: TeacherEntity;
 
-  @OneToMany(() => ActivityEntity, (activity) => activity.course)
-  activities!: ActivityEntity[];
+  @OneToMany(() => Activity, (activity) => activity.course)
+  activities: Activity[];
 
-  @OneToMany(
-    () => StudentCourseEntity,
-    (studentCourse) => studentCourse.student
-  )
-  students!: StudentCourseEntity[];
+  @OneToMany(() => Enrollment, (enrollment) => enrollment.course)
+  enrollments: Enrollment[];
 }

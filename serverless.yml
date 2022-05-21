@@ -48,9 +48,9 @@ functions:
           method: PATCH
           path: /courses/{id}
 
-  createTeacher:
-    handler: src/handlers/teacher.createTeacher
+  createUser:
+    handler: src/handlers/user.createUser
     events:
       - httpApi:
           method: POST
-          path: /teachers
+          path: /users

@@ -3,18 +3,18 @@ import { GetManyResponseDto } from "../../common/dto";
 import { BadRequestError, NotFoundError } from "../../common/errors";
 import { BaseService } from "../../common/services";
 import { dataSource } from "../../config/database";
-import { TeacherService } from "../teacher";
+import { UserService } from "../user";
 import { Course } from "./course.entity";
 import { CreateCourseDto, GetCoursesRequestDto } from "./dto";
 
 export class CourseService extends BaseService {
   courseRepository: Repository<Course>;
-  teacherService: TeacherService;
+  userService: UserService;
 
   constructor() {
     super();
     this.courseRepository = dataSource.getRepository(Course);
-    this.teacherService = new TeacherService();
+    this.userService = new UserService();
   }
 
   public async getAllCourses({
@@ -23,7 +23,7 @@ export class CourseService extends BaseService {
     take,
     orderBy,
     orderDirection,
-    loadTeacher = false,
+    loadUser = false,
   }: GetCoursesRequestDto): Promise<GetManyResponseDto<Course>> {
     await this.loadDatabase();
 
@@ -40,7 +40,7 @@ export class CourseService extends BaseService {
           [orderBy]: orderDirection ?? "ASC",
         }),
       },
-      relations: loadTeacher ? ["teacher"] : [],
+      relations: loadUser ? ["user"] : [],
     });
 
     return {
@@ -63,10 +63,10 @@ export class CourseService extends BaseService {
   public async createCourse(course: CreateCourseDto): Promise<Course> {
     await this.loadDatabase();
 
-    const teacher = await this.teacherService.getTeacherById(course.teacherId);
+    const user = await this.userService.getUserById(course.userId);
 
-    if (!teacher) {
-      throw new BadRequestError("Teacher not found");
+    if (!user) {
+      throw new BadRequestError("User not found");
     }
 
     return await this.courseRepository.save(course);

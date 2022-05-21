@@ -2,7 +2,7 @@ import { Column, Entity, ManyToOne, OneToMany } from "typeorm";
 import { BaseCollection } from "../../common/entities";
 import { Activity } from "../activity";
 import { Enrollment } from "../enrollment";
-import { Teacher } from "../teacher";
+import { User } from "../user";
 
 @Entity("course")
 export class Course extends BaseCollection {
@@ -15,10 +15,10 @@ export class Course extends BaseCollection {
   @Column({ name: "published", type: "boolean", default: false })
   published: boolean;
 
-  @ManyToOne(() => Teacher, (teacher) => teacher.courses, {
+  @ManyToOne(() => User, (user) => user.courses, {
     nullable: false,
   })
-  teacher: Teacher;
+  user: User;
 
   @OneToMany(() => Activity, (activity) => activity.course)
   activities: Activity[];

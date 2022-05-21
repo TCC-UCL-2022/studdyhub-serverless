@@ -1,7 +1,7 @@
-import { Column, Entity, OneToOne } from "typeorm";
+import { Column, Entity, ManyToOne } from "typeorm";
 import { BaseCollection } from "../../common/entities";
 import { Activity } from "../activity/activity.entity";
-import { Student } from "../student";
+import { User } from "../user";
 
 @Entity("activity-progress")
 export class ActivityProgress extends BaseCollection {
@@ -11,9 +11,11 @@ export class ActivityProgress extends BaseCollection {
   @Column({ name: "completed", type: "boolean", default: false })
   completed: boolean;
 
-  @OneToOne(() => Activity, (activity) => activity.activityProgress)
+  @ManyToOne(() => Activity, (activity) => activity.activityProgress, {
+    nullable: false,
+  })
   activity: Activity;
 
-  @OneToOne(() => Student, (student) => student.activityProgress)
-  student: Student;
+  @ManyToOne(() => User, (user) => user.activityProgress, { nullable: false })
+  user: User;
 }

@@ -21,35 +21,35 @@ plugins:
 
 functions:
   getAllCourses:
-    handler: src/modules/course/handler.getAllCourses
+    handler: src/handlers/course.getAllCourses
     events:
       - httpApi:
           method: GET
           path: /courses
 
   getCourseById:
-    handler: src/modules/course/handler.getCourseById
+    handler: src/handlers/course.getCourseById
     events:
       - httpApi:
           method: GET
           path: /courses/{id}
 
   createCourse:
-    handler: src/modules/course/handler.createCourse
+    handler: src/handlers/course.createCourse
     events:
       - httpApi:
           method: POST
           path: /courses
 
   updateCourse:
-    handler: src/modules/course/handler.updateCourse
+    handler: src/handlers/course.updateCourse
     events:
       - httpApi:
           method: PATCH
           path: /courses/{id}
 
   createTeacher:
-    handler: src/modules/teacher/handler.createTeacher
+    handler: src/handlers/teacher.createTeacher
     events:
       - httpApi:
           method: POST

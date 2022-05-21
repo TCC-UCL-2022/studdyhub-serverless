@@ -2,7 +2,7 @@ import { Column, Entity, ManyToOne, OneToMany } from "typeorm";
 import { BaseCollection } from "../../common/entities";
 import { ActivityType } from "../../common/enums";
 import { ActivityCompletedEntity } from "../activity-completed";
-import { SectionEntity } from "../section";
+import { CourseEntity } from "../course";
 
 @Entity("activity")
 export class ActivityEntity extends BaseCollection {
@@ -18,11 +18,11 @@ export class ActivityEntity extends BaseCollection {
   @Column({ type: "enum", enum: ActivityType, default: ActivityType.VIDEO })
   type!: ActivityType;
 
-  @ManyToOne((type) => SectionEntity, (section) => section.activities)
-  section!: SectionEntity;
+  @ManyToOne(() => CourseEntity, (course) => course.activities)
+  course!: CourseEntity;
 
   @OneToMany(
-    (type) => ActivityCompletedEntity,
+    () => ActivityCompletedEntity,
     (activityCompleted) => activityCompleted.activity
   )
   completed!: ActivityCompletedEntity[];

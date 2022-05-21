@@ -1,6 +1,6 @@
 import { Column, Entity, ManyToOne, OneToMany } from "typeorm";
 import { BaseCollection } from "../../common/entities";
-import { SectionEntity } from "../section";
+import { ActivityEntity } from "../activity";
 import { StudentCourseEntity } from "../student-course";
 import { TeacherEntity } from "../teacher";
 
@@ -15,16 +15,16 @@ export class CourseEntity extends BaseCollection {
   @Column({ name: "published", type: "boolean", default: false })
   published!: boolean;
 
-  @ManyToOne((type) => TeacherEntity, (teacher) => teacher.courses, {
+  @ManyToOne(() => TeacherEntity, (teacher) => teacher.courses, {
     nullable: false,
   })
   teacher!: TeacherEntity;
 
-  @OneToMany((type) => SectionEntity, (section) => section.course)
-  sections!: SectionEntity[];
+  @OneToMany(() => ActivityEntity, (activity) => activity.course)
+  activities!: ActivityEntity[];
 
   @OneToMany(
-    (type) => StudentCourseEntity,
+    () => StudentCourseEntity,
     (studentCourse) => studentCourse.student
   )
   students!: StudentCourseEntity[];

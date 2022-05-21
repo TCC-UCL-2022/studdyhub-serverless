@@ -1,6 +1,5 @@
 import { Handler } from "aws-lambda";
-import { StatusCodes } from "http-status-codes";
-import { BadRequestError, NotFoundError } from "../../common/errors";
+import { NotFoundError } from "../../common/errors";
 import { HandlerEvent } from "../../common/types";
 import { MessageUtil } from "../../common/utils";
 import { CourseEntity } from "./course.entity";
@@ -18,17 +17,9 @@ export class CourseController {
     event
   ) => {
     try {
-      const { query, skip, take, orderBy, orderDirection, loadTeacher } =
-        event.queryStringParameters || {};
-
-      const { items, count } = await this.courseService.getAllCourses({
-        query,
-        skip,
-        take,
-        orderBy,
-        orderDirection,
-        loadTeacher,
-      });
+      const { items, count } = await this.courseService.getAllCourses(
+        event.queryStringParameters || {}
+      );
 
       return MessageUtil.success({ items, count });
     } catch (err) {

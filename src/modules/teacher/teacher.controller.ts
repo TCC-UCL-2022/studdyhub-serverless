@@ -1,5 +1,4 @@
 import { Handler } from "aws-lambda";
-import { GetManyResponseDto } from "../../common/dto";
 import { NotFoundError } from "../../common/errors";
 import { HandlerEvent } from "../../common/types";
 import { MessageUtil } from "../../common/utils";

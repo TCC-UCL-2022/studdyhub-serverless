@@ -3,7 +3,7 @@ import { GetManyResponseDto } from "../../common/dto";
 import { BadRequestError, NotFoundError } from "../../common/errors";
 import { BaseService } from "../../common/services";
 import { dataSource } from "../../config/database";
-import { TeacherEntity, TeacherService } from "../teacher";
+import { TeacherService } from "../teacher";
 import { CourseEntity } from "./course.entity";
 import { GetCoursesRequestDto } from "./dto/request";
 

@@ -4,16 +4,16 @@ import { BadRequestError, NotFoundError } from "../../common/errors";
 import { BaseService } from "../../common/services";
 import { dataSource } from "../../config/database";
 import { TeacherService } from "../teacher";
-import { CourseEntity } from "./course.entity";
+import { Course } from "./course.entity";
 import { CreateCourseDto, GetCoursesRequestDto } from "./dto";
 
 export class CourseService extends BaseService {
-  courseRepository: Repository<CourseEntity>;
+  courseRepository: Repository<Course>;
   teacherService: TeacherService;
 
   constructor() {
     super();
-    this.courseRepository = dataSource.getRepository(CourseEntity);
+    this.courseRepository = dataSource.getRepository(Course);
     this.teacherService = new TeacherService();
   }
 
@@ -24,7 +24,7 @@ export class CourseService extends BaseService {
     orderBy,
     orderDirection,
     loadTeacher = false,
-  }: GetCoursesRequestDto): Promise<GetManyResponseDto<CourseEntity>> {
+  }: GetCoursesRequestDto): Promise<GetManyResponseDto<Course>> {
     await this.loadDatabase();
 
     const [items, count] = await this.courseRepository.findAndCount({
@@ -49,7 +49,7 @@ export class CourseService extends BaseService {
     };
   }
 
-  public async getCourseById(id: string): Promise<CourseEntity | null> {
+  public async getCourseById(id: string): Promise<Course | null> {
     await this.loadDatabase();
 
     return await this.courseRepository.findOne({
@@ -60,7 +60,7 @@ export class CourseService extends BaseService {
     });
   }
 
-  public async createCourse(course: CreateCourseDto): Promise<CourseEntity> {
+  public async createCourse(course: CreateCourseDto): Promise<Course> {
     await this.loadDatabase();
 
     const teacher = await this.teacherService.getTeacherById(course.teacherId);
@@ -74,24 +74,14 @@ export class CourseService extends BaseService {
 
   public async updateCourse(
     id: string,
-    course: Partial<CourseEntity>
-  ): Promise<CourseEntity | null> {
+    course: Partial<CreateCourseDto>
+  ): Promise<Course | null> {
     await this.loadDatabase();
 
     const courseFound = await this.getCourseById(id);
 
     if (!courseFound) {
       throw new NotFoundError("Course not found");
-    }
-
-    if (course.teacher) {
-      const teacher = await this.teacherService.getTeacherById(
-        `${course.teacher}`
-      );
-
-      if (!teacher) {
-        throw new BadRequestError("Teacher not found");
-      }
     }
 
     return await this.courseRepository.save({

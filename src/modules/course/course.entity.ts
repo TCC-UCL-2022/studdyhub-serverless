@@ -2,10 +2,10 @@ import { Column, Entity, ManyToOne, OneToMany } from "typeorm";
 import { BaseCollection } from "../../common/entities";
 import { Activity } from "../activity";
 import { Enrollment } from "../enrollment";
-import { TeacherEntity } from "../teacher";
+import { Teacher } from "../teacher";
 
 @Entity("course")
-export class CourseEntity extends BaseCollection {
+export class Course extends BaseCollection {
   @Column({ name: "title", type: "varchar", length: 255 })
   title: string;
 
@@ -15,10 +15,10 @@ export class CourseEntity extends BaseCollection {
   @Column({ name: "published", type: "boolean", default: false })
   published: boolean;
 
-  @ManyToOne(() => TeacherEntity, (teacher) => teacher.courses, {
+  @ManyToOne(() => Teacher, (teacher) => teacher.courses, {
     nullable: false,
   })
-  teacher: TeacherEntity;
+  teacher: Teacher;
 
   @OneToMany(() => Activity, (activity) => activity.course)
   activities: Activity[];

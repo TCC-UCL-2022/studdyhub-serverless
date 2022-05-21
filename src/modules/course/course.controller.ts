@@ -2,7 +2,6 @@ import { Handler } from "aws-lambda";
 import { NotFoundError } from "../../common/errors";
 import { HandlerEvent } from "../../common/types";
 import { MessageUtil } from "../../common/utils";
-import { CourseEntity } from "./course.entity";
 import { CourseService } from "./course.service";
 import { CreateCourseDto, GetCoursesRequestDto } from "./dto";
 
@@ -58,7 +57,7 @@ export class CourseController {
   updateCourse: Handler<HandlerEvent<{ id: string }>> = async (event) => {
     try {
       const { id } = event.pathParameters;
-      const payload: Partial<CourseEntity> = JSON.parse(event.body);
+      const payload: Partial<CreateCourseDto> = JSON.parse(event.body);
 
       const course = await this.courseService.updateCourse(id, payload);
 

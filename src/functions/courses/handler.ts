@@ -1,5 +1,5 @@
-import { dataSource } from "../config/database";
-import { CourseController } from "../modules/course";
+import { dataSource } from "../../config/database";
+import { CourseController } from "../../modules/course";
 
 dataSource.initialize();
 

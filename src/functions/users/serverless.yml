@@ -1,0 +1,6 @@
+createUser:
+  handler: src/functions/users/handler.createUser
+  events:
+    - httpApi:
+        method: POST
+        path: /users

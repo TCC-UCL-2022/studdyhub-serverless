@@ -1,0 +1,27 @@
+getAllCourses:
+  handler: src/functions/courses/handler.getAllCourses
+  events:
+    - httpApi:
+        method: GET
+        path: /courses
+
+getCourseById:
+  handler: src/functions/courses/handler.getCourseById
+  events:
+    - httpApi:
+        method: GET
+        path: /courses/{id}
+
+createCourse:
+  handler: src/functions/courses/handler.createCourse
+  events:
+    - httpApi:
+        method: POST
+        path: /courses
+
+updateCourse:
+  handler: src/functions/courses/handler.updateCourse
+  events:
+    - httpApi:
+        method: PATCH
+        path: /courses/{id}

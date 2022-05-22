@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "local": "serverless offline",
+    "local": "serverless offline --httpPort 3001",
     "deploy": "serverless deploy --stage prod"
   },
   "repository": {

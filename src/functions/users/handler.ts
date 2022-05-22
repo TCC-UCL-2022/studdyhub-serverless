@@ -1,5 +1,5 @@
-import { dataSource } from "../config/database";
-import { UserController } from "../modules/user";
+import { dataSource } from "../../config/database";
+import { UserController } from "../../modules/user";
 
 dataSource.initialize();
 

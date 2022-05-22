@@ -20,37 +20,5 @@ plugins:
   - serverless-offline
 
 functions:
-  getAllCourses:
-    handler: src/handlers/course.getAllCourses
-    events:
-      - httpApi:
-          method: GET
-          path: /courses
-
-  getCourseById:
-    handler: src/handlers/course.getCourseById
-    events:
-      - httpApi:
-          method: GET
-          path: /courses/{id}
-
-  createCourse:
-    handler: src/handlers/course.createCourse
-    events:
-      - httpApi:
-          method: POST
-          path: /courses
-
-  updateCourse:
-    handler: src/handlers/course.updateCourse
-    events:
-      - httpApi:
-          method: PATCH
-          path: /courses/{id}
-
-  createUser:
-    handler: src/handlers/user.createUser
-    events:
-      - httpApi:
-          method: POST
-          path: /users
+  - ${file(./src/functions/courses/serverless.yml)}
+  - ${file(./src/functions/users/serverless.yml)}

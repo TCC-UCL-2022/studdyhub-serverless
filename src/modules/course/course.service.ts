@@ -63,7 +63,7 @@ export class CourseService extends BaseService {
   public async createCourse(payload: CreateCourseDto): Promise<Course> {
     await this.loadDatabase();
 
-    const user = await this.userService.getUserById(payload.userId);
+    const user = await this.userService.getUserByCognitoId(payload.userId);
 
     if (!user) {
       throw new BadRequestError("User not found");

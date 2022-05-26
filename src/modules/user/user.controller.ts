@@ -11,11 +11,11 @@ export class UserController {
     this.userService = new UserService();
   }
 
-  getUserById: Handler<HandlerEvent<{ id: string }>> = async (event) => {
+  getUserByCognitoId: Handler<HandlerEvent<{ id: string }>> = async (event) => {
     try {
       const { id } = event.pathParameters;
 
-      const user = await this.userService.getUserById(id);
+      const user = await this.userService.getUserByCognitoId(id);
 
       return MessageUtil.success(user);
     } catch (err) {

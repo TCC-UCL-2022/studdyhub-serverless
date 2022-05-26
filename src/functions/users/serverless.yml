@@ -4,3 +4,10 @@ createUser:
     - httpApi:
         method: POST
         path: /users
+
+getUserByCognitoId:
+  handler: src/functions/users/handler.getUserByCognitoId
+  events:
+    - httpApi:
+        method: GET
+        path: /users/{id}

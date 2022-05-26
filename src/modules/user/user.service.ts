@@ -13,12 +13,12 @@ export class UserService extends BaseService {
     this.userRepository = dataSource.getRepository(User);
   }
 
-  public async getUserById(id: string): Promise<User> {
+  public async getUserByCognitoId(cognitoId: string): Promise<User> {
     await this.loadDatabase();
 
     const user = await this.userRepository.findOne({
       where: {
-        id,
+        cognitoId,
         active: true,
       },
     });

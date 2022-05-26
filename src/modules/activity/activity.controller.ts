@@ -12,20 +12,25 @@ export class ActivityController {
     this.activityService = new ActivityService();
   }
 
-  getCourseActivities: Handler<HandlerEvent<{ id: string }>> = async (
+  getCourseActivities: Handler<HandlerEvent<{ courseId: string }>> = async (
     event
   ) => {
     this.logger.debug(
       "[getCourseActivities] invoked for courseId:",
-      event.pathParameters.id
+      event.pathParameters.courseId
     );
 
     try {
-      const { id } = event.pathParameters;
+      const { courseId } = event.pathParameters;
 
-      this.logger.debug("[getCourseActivities] invoked for courseId:", id);
+      this.logger.debug(
+        "[getCourseActivities] invoked for courseId:",
+        courseId
+      );
 
-      const activities = await this.activityService.getCourseActivities(id);
+      const activities = await this.activityService.getCourseActivities(
+        courseId
+      );
 
       if (!activities) {
         return [];

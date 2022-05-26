@@ -1,0 +1,6 @@
+getCourseActivities:
+  handler: src/functions/activities/handler.getCourseActivities
+  events:
+    - httpApi:
+        method: GET
+        path: /courses/{courseId}/activities

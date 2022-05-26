@@ -8,8 +8,8 @@ import { Course } from "./course.entity";
 import { CreateCourseDto, GetCoursesRequestDto } from "./dto";
 
 export class CourseService extends BaseService {
-  courseRepository: Repository<Course>;
-  userService: UserService;
+  private readonly courseRepository: Repository<Course>;
+  private readonly userService: UserService;
 
   constructor() {
     super();

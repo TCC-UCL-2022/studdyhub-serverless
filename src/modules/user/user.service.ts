@@ -6,7 +6,7 @@ import { CreateUserDto } from "./dto";
 import { User } from "./user.entity";
 
 export class UserService extends BaseService {
-  userRepository: Repository<User>;
+  private readonly userRepository: Repository<User>;
 
   constructor() {
     super();

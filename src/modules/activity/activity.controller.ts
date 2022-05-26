@@ -2,6 +2,7 @@ import { Handler } from "aws-lambda";
 import { HandlerEvent } from "../../common/types";
 import { Logger, MessageUtil } from "../../common/utils";
 import { ActivityService } from "./activity.service";
+import { CreateActivityDto } from "./dto";
 
 export class ActivityController {
   private readonly logger: Logger;
@@ -45,6 +46,32 @@ export class ActivityController {
       this.logger.error("[getCourseActivities] failed:", err);
 
       return MessageUtil.error(err);
+    }
+  };
+
+  createCourseActivity: Handler<HandlerEvent> = async (event) => {
+    try {
+      const activityPayload: CreateActivityDto = JSON.parse(event.body);
+
+      this.logger.debug(
+        "[createCourseActivity] invoked for courseId:",
+        activityPayload.courseId
+      );
+
+      const activity = await this.activityService.createCourseActivity(
+        activityPayload
+      );
+
+      this.logger.debug(
+        "[createCourseActivity] created activity:",
+        activity.id
+      );
+
+      return MessageUtil.success(activity);
+    } catch (error) {
+      this.logger.error("[createCourseActivity] failed:", error);
+
+      return MessageUtil.error(error);
     }
   };
 }

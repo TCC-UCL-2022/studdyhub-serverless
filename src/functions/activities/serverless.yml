@@ -4,3 +4,10 @@ getCourseActivities:
     - httpApi:
         method: GET
         path: /courses/{courseId}/activities
+
+createCourseActivity:
+  handler: src/functions/activities/handler.createCourseActivity
+  events:
+    - httpApi:
+        method: POST
+        path: /courses/{courseId}/activities

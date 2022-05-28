@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import { DataSource } from "typeorm";
+import { DataSource, DataSourceOptions } from "typeorm";
 import { Activity } from "../../modules/activity";
 import { ActivityProgress } from "../../modules/activity-progress";
 import { Course } from "../../modules/course";
@@ -7,7 +7,7 @@ import { Enrollment } from "../../modules/enrollment";
 import { User } from "../../modules/user";
 import { environments } from "../environment";
 
-export const dataSource = new DataSource({
+export const dataSourceOptions: DataSourceOptions = {
   name: "studdyhub",
   type: "postgres",
   host: environments.DB_HOST,
@@ -18,4 +18,6 @@ export const dataSource = new DataSource({
   synchronize: true,
   logger: "debug",
   entities: [ActivityProgress, Activity, Course, Enrollment, User],
-});
+};
+
+export const dataSource = new DataSource(dataSourceOptions);

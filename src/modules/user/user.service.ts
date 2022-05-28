@@ -1,22 +1,13 @@
-import { Repository } from "typeorm";
 import { NotFoundError } from "../../common/errors";
 import { BaseService } from "../../common/services";
-import { dataSource } from "../../config/database";
 import { CreateUserDto } from "./dto";
 import { User } from "./user.entity";
 
 export class UserService extends BaseService {
-  private readonly userRepository: Repository<User>;
-
-  constructor() {
-    super();
-    this.userRepository = dataSource.getRepository(User);
-  }
-
   public async getUserByCognitoId(cognitoId: string): Promise<User> {
-    await this.loadDatabase();
+    const userRepository = await this.getEntityRepository(User);
 
-    const user = await this.userRepository.findOne({
+    const user = await userRepository.findOne({
       where: {
         cognitoId,
         active: true,
@@ -31,15 +22,15 @@ export class UserService extends BaseService {
   }
 
   public async createUser(user: CreateUserDto): Promise<User> {
-    await this.loadDatabase();
+    const userRepository = await this.getEntityRepository(User);
 
-    return await this.userRepository.save(user);
+    return await userRepository.save(user);
   }
 
   public async updateUser(id: string, user: Partial<User>): Promise<User> {
-    await this.loadDatabase();
+    const userRepository = await this.getEntityRepository(User);
 
-    const existingUser = await this.userRepository.findOne({
+    const existingUser = await userRepository.findOne({
       where: {
         id,
         active: true,
@@ -50,7 +41,7 @@ export class UserService extends BaseService {
       throw new NotFoundError("User not found");
     }
 
-    return await this.userRepository.save({
+    return await userRepository.save({
       ...existingUser,
       ...user,
     });

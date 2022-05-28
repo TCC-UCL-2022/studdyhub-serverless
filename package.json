@@ -22,7 +22,8 @@
     "http-status-codes": "^2.2.0",
     "pg": "^8.7.3",
     "reflect-metadata": "^0.1.13",
-    "typeorm": "^0.3.6"
+    "typeorm": "^0.3.6",
+    "typeorm-extension": "^2.1.2"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.93",

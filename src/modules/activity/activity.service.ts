@@ -1,25 +1,22 @@
-import { Repository } from "typeorm";
 import { BadRequestError } from "../../common/errors";
 import { BaseService } from "../../common/services";
-import { dataSource } from "../../config/database";
 import { CourseService } from "../course";
 import { Activity } from "./activity.entity";
 import { CreateActivityDto } from "./dto";
 
 export class ActivityService extends BaseService {
-  private readonly activityRepository: Repository<Activity>;
   private readonly courseService: CourseService;
 
   constructor() {
     super();
-    this.activityRepository = dataSource.getRepository(Activity);
+
     this.courseService = new CourseService();
   }
 
   public async getCourseActivities(courseId: string): Promise<Activity[]> {
-    await this.loadDatabase();
+    const activityRepository = await this.getEntityRepository(Activity);
 
-    const activities = await this.activityRepository.find({
+    const activities = await activityRepository.find({
       where: {
         active: true,
         course: {
@@ -34,7 +31,7 @@ export class ActivityService extends BaseService {
   public async createCourseActivity(
     activityPayload: CreateActivityDto
   ): Promise<Activity> {
-    await this.loadDatabase();
+    const activityRepository = await this.getEntityRepository(Activity);
 
     const course = await this.courseService.getCourseById(
       activityPayload.courseId
@@ -49,6 +46,6 @@ export class ActivityService extends BaseService {
 
     activity.course = course;
 
-    return this.activityRepository.save(activity);
+    return activityRepository.save(activity);
   }
 }

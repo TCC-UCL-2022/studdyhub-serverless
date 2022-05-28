@@ -1,19 +1,17 @@
-import { Like, Repository } from "typeorm";
+import { Like } from "typeorm";
 import { GetManyResponseDto } from "../../common/dto";
 import { BadRequestError, NotFoundError } from "../../common/errors";
 import { BaseService } from "../../common/services";
-import { dataSource } from "../../config/database";
 import { UserService } from "../user";
 import { Course } from "./course.entity";
 import { CreateCourseDto, GetCoursesRequestDto } from "./dto";
 
 export class CourseService extends BaseService {
-  private readonly courseRepository: Repository<Course>;
   private readonly userService: UserService;
 
   constructor() {
     super();
-    this.courseRepository = dataSource.getRepository(Course);
+
     this.userService = new UserService();
   }
 
@@ -25,9 +23,9 @@ export class CourseService extends BaseService {
     orderDirection,
     loadUser = false,
   }: GetCoursesRequestDto): Promise<GetManyResponseDto<Course>> {
-    await this.loadDatabase();
+    const courseRepository = await this.getEntityRepository(Course);
 
-    const [items, count] = await this.courseRepository.findAndCount({
+    const [items, count] = await courseRepository.findAndCount({
       where: {
         active: true,
         title: query && Like(`%${query}%`),
@@ -50,9 +48,9 @@ export class CourseService extends BaseService {
   }
 
   public async getCourseById(id: string): Promise<Course | null> {
-    await this.loadDatabase();
+    const courseRepository = await this.getEntityRepository(Course);
 
-    return await this.courseRepository.findOne({
+    return await courseRepository.findOne({
       where: {
         id,
         active: true,
@@ -61,7 +59,7 @@ export class CourseService extends BaseService {
   }
 
   public async createCourse(payload: CreateCourseDto): Promise<Course> {
-    await this.loadDatabase();
+    const courseRepository = await this.getEntityRepository(Course);
 
     const user = await this.userService.getUserByCognitoId(payload.userId);
 
@@ -74,14 +72,14 @@ export class CourseService extends BaseService {
     course.description = payload.description;
     course.user = user;
 
-    return await this.courseRepository.save(course);
+    return await courseRepository.save(course);
   }
 
   public async updateCourse(
     id: string,
     course: Partial<CreateCourseDto>
   ): Promise<Course | null> {
-    await this.loadDatabase();
+    const courseRepository = await this.getEntityRepository(Course);
 
     const courseFound = await this.getCourseById(id);
 
@@ -89,7 +87,7 @@ export class CourseService extends BaseService {
       throw new NotFoundError("Course not found");
     }
 
-    return await this.courseRepository.save({
+    return await courseRepository.save({
       ...course,
       id,
     });

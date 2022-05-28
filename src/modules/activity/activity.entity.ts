@@ -12,7 +12,7 @@ export class Activity extends BaseCollection {
   @Column({ type: "varchar" })
   description: string;
 
-  @Column({ type: "text" })
+  @Column({ type: "text", default: "" })
   content: string;
 
   @Column({ type: "enum", enum: ActivityType, default: ActivityType.VIDEO })

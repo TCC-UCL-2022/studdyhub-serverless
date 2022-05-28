@@ -19,5 +19,3 @@ export const dataSource = new DataSource({
   logger: "debug",
   entities: [ActivityProgress, Activity, Course, Enrollment, User],
 });
-
-dataSource.initialize();

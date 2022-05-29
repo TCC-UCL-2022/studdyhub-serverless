@@ -3,7 +3,7 @@ import { NotFoundError } from "../../common/errors";
 import { HandlerEvent } from "../../common/types";
 import { Logger, MessageUtil } from "../../common/utils";
 import { CourseService } from "./course.service";
-import { CreateCourseDto, GetCoursesRequestDto } from "./dto";
+import { CreateCourseDto, GetCoursesRequestDto, UpdateCourseDto } from "./dto";
 
 export class CourseController {
   private readonly logger: Logger;
@@ -80,7 +80,7 @@ export class CourseController {
 
     try {
       const { id } = event.pathParameters;
-      const payload: Partial<CreateCourseDto> = JSON.parse(event.body);
+      const payload: UpdateCourseDto = JSON.parse(event.body);
 
       const course = await this.courseService.updateCourse(id, payload);
 

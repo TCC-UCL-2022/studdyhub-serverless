@@ -4,7 +4,7 @@ import { BadRequestError, NotFoundError } from "../../common/errors";
 import { BaseService } from "../../common/services";
 import { UserService } from "../user";
 import { Course } from "./course.entity";
-import { CreateCourseDto, GetCoursesRequestDto } from "./dto";
+import { CreateCourseDto, GetCoursesRequestDto, UpdateCourseDto } from "./dto";
 
 export class CourseService extends BaseService {
   private readonly userService: UserService;
@@ -17,11 +17,13 @@ export class CourseService extends BaseService {
 
   public async getAllCourses({
     query,
-    skip,
-    take,
+    skip = 0,
+    take = 50,
     orderBy,
     orderDirection,
     loadUser = false,
+    userId,
+    published,
   }: GetCoursesRequestDto): Promise<GetManyResponseDto<Course>> {
     const courseRepository = await this.getEntityRepository(Course);
 
@@ -30,6 +32,8 @@ export class CourseService extends BaseService {
         active: true,
         title: query && Like(`%${query}%`),
         description: query && Like(`%${query}%`),
+        user: userId ? { id: userId } : undefined,
+        published: published ? published : undefined,
       },
       skip,
       take,
@@ -77,7 +81,7 @@ export class CourseService extends BaseService {
 
   public async updateCourse(
     id: string,
-    course: Partial<CreateCourseDto>
+    course: UpdateCourseDto
   ): Promise<Course | null> {
     const courseRepository = await this.getEntityRepository(Course);
 

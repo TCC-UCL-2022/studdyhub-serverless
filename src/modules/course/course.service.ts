@@ -96,4 +96,19 @@ export class CourseService extends BaseService {
       id,
     });
   }
+
+  public async deleteCourse(id: string): Promise<Course | null> {
+    const courseRepository = await this.getEntityRepository(Course);
+
+    const courseFound = await this.getCourseById(id);
+
+    if (!courseFound) {
+      throw new NotFoundError("Course not found");
+    }
+
+    return await courseRepository.save({
+      ...courseFound,
+      active: false,
+    });
+  }
 }

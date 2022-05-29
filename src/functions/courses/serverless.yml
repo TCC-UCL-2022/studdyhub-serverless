@@ -25,3 +25,10 @@ updateCourse:
     - httpApi:
         method: PATCH
         path: /courses/{id}
+
+deleteCourse:
+  handler: src/functions/courses/handler.deleteCourse
+  events:
+    - httpApi:
+        method: DELETE
+        path: /courses/{id}

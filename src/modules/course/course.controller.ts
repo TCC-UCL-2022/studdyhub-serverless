@@ -98,4 +98,27 @@ export class CourseController {
       return MessageUtil.error(err);
     }
   };
+
+  deleteCourse: Handler<HandlerEvent<{ id: string }>> = async (event) => {
+    this.logger.debug("[deleteCourse] invoked");
+
+    try {
+      const { id } = event.pathParameters;
+
+      const course = await this.courseService.deleteCourse(id);
+
+      if (!course) {
+        this.logger.error("[deleteCourse] course not found");
+        throw new NotFoundError("Course not found");
+      }
+
+      this.logger.debug("[deleteCourse] deleted course:", course.id);
+
+      return MessageUtil.success(course);
+    } catch (err) {
+      this.logger.error("[deleteCourse] failed:", err);
+
+      return MessageUtil.error(err);
+    }
+  };
 }

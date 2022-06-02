@@ -1,4 +1,4 @@
-import { Like } from "typeorm";
+import { FindOneOptions, ILike } from "typeorm";
 import { GetManyResponseDto } from "../../common/dto";
 import { BadRequestError, NotFoundError } from "../../common/errors";
 import { BaseService } from "../../common/services";
@@ -27,14 +27,27 @@ export class CourseService extends BaseService {
   }: GetCoursesRequestDto): Promise<GetManyResponseDto<Course>> {
     const courseRepository = await this.getEntityRepository(Course);
 
+    const baseWhere: FindOneOptions<Course>["where"] = {
+      active: true,
+      ...(published && { published: true }),
+      ...(userId && { user: { id: userId } }),
+    };
+
     const [items, count] = await courseRepository.findAndCount({
-      where: {
-        active: true,
-        title: query && Like(`%${query}%`),
-        description: query && Like(`%${query}%`),
-        user: userId ? { id: userId } : undefined,
-        published: published ? published : undefined,
-      },
+      where: [
+        {
+          ...baseWhere,
+          ...(query && {
+            title: ILike(`%${query}%`),
+          }),
+        },
+        {
+          ...baseWhere,
+          ...(query && {
+            description: ILike(`%${query}%`),
+          }),
+        },
+      ],
       skip,
       take,
       order: {

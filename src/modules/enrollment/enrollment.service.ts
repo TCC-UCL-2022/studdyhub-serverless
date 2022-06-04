@@ -16,16 +16,16 @@ export class EnrollmentService {
     courseId,
     userId,
   }: CreateEnrollmentDto): Promise<Enrollment> {
-    const enrollmentRepository = await this.databaseService.getEntityRepository(
-      Enrollment
-    );
-
     const user = await this.UserService.getUserById(userId);
     const course = await this.CourseService.getCourseById(courseId);
 
     if (!course) {
       throw new NotFoundError(`Course with id ${courseId} not found`);
     }
+
+    const enrollmentRepository = await this.databaseService.getEntityRepository(
+      Enrollment
+    );
 
     const existingEnrollment = await enrollmentRepository.findOne({
       where: {

@@ -32,10 +32,6 @@ export class ActivityService {
   public async createCourseActivity(
     activityPayload: CreateActivityDto
   ): Promise<Activity> {
-    const activityRepository = await this.databaseService.getEntityRepository(
-      Activity
-    );
-
     const course = await this.courseService.getCourseById(
       activityPayload.courseId
     );
@@ -43,6 +39,10 @@ export class ActivityService {
     if (!course) {
       throw new BadRequestError("Course not found");
     }
+
+    const activityRepository = await this.databaseService.getEntityRepository(
+      Activity
+    );
 
     const activity = new Activity();
     Object.assign(activity, activityPayload);

@@ -83,15 +83,15 @@ export class CourseService {
   }
 
   public async createCourse(payload: CreateCourseDto): Promise<Course> {
-    const courseRepository = await this.databaseService.getEntityRepository(
-      Course
-    );
-
     const user = await this.userService.getUserByCognitoId(payload.userId);
 
     if (!user) {
       throw new BadRequestError("User not found");
     }
+
+    const courseRepository = await this.databaseService.getEntityRepository(
+      Course
+    );
 
     const course = new Course();
     course.title = payload.title;
@@ -109,15 +109,15 @@ export class CourseService {
     id: string,
     course: UpdateCourseDto
   ): Promise<Course | null> {
-    const courseRepository = await this.databaseService.getEntityRepository(
-      Course
-    );
-
     const courseFound = await this.getCourseById(id);
 
     if (!courseFound) {
       throw new NotFoundError("Course not found");
     }
+
+    const courseRepository = await this.databaseService.getEntityRepository(
+      Course
+    );
 
     const updated = await courseRepository.save({
       ...course,
@@ -130,15 +130,15 @@ export class CourseService {
   }
 
   public async deleteCourse(id: string): Promise<Course | null> {
-    const courseRepository = await this.databaseService.getEntityRepository(
-      Course
-    );
-
     const courseFound = await this.getCourseById(id);
 
     if (!courseFound) {
       throw new NotFoundError("Course not found");
     }
+
+    const courseRepository = await this.databaseService.getEntityRepository(
+      Course
+    );
 
     const course = await courseRepository.save({
       ...courseFound,

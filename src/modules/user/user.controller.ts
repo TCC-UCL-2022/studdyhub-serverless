@@ -6,11 +6,9 @@ import { UserService } from "./user.service";
 
 export class UserController {
   private readonly logger: Logger;
-  private readonly userService: UserService;
 
-  constructor() {
+  constructor(private readonly userService: UserService) {
     this.logger = Logger.createLogger("UserController");
-    this.userService = new UserService();
   }
 
   getUserByCognitoId: Handler<HandlerEvent<{ id: string }>> = async (event) => {

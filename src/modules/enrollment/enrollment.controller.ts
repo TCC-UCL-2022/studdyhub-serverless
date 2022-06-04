@@ -6,11 +6,9 @@ import { EnrollmentService } from "./enrollment.service";
 
 export class EnrollmentController {
   private readonly logger: Logger;
-  private readonly enrollmentService: EnrollmentService;
 
-  constructor() {
+  constructor(private readonly enrollmentService: EnrollmentService) {
     this.logger = Logger.createLogger("EnrollmentController");
-    this.enrollmentService = new EnrollmentService();
   }
 
   createErollment: Handler<HandlerEvent> = async (event) => {

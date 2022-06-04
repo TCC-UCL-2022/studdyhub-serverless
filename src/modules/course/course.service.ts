@@ -1,19 +1,16 @@
 import { FindOneOptions, ILike } from "typeorm";
 import { GetManyResponseDto } from "../../common/dto";
 import { BadRequestError, NotFoundError } from "../../common/errors";
-import { BaseService } from "../../common/services";
 import { Course } from "../../entities";
+import { DatabaseService } from "../database";
 import { UserService } from "../user";
 import { CreateCourseDto, GetCoursesRequestDto, UpdateCourseDto } from "./dto";
 
-export class CourseService extends BaseService {
-  private readonly userService: UserService;
-
-  constructor() {
-    super();
-
-    this.userService = new UserService();
-  }
+export class CourseService {
+  constructor(
+    private readonly databaseService: DatabaseService,
+    private readonly userService: UserService
+  ) {}
 
   public async getAllCourses({
     query,
@@ -25,7 +22,9 @@ export class CourseService extends BaseService {
     userId,
     published,
   }: GetCoursesRequestDto): Promise<GetManyResponseDto<Course>> {
-    const courseRepository = await this.getEntityRepository(Course);
+    const courseRepository = await this.databaseService.getEntityRepository(
+      Course
+    );
 
     const baseWhere: FindOneOptions<Course>["where"] = {
       active: true,
@@ -58,7 +57,7 @@ export class CourseService extends BaseService {
       relations: loadUser ? ["user"] : [],
     });
 
-    await this.closeDatabaseConnection();
+    await this.databaseService.closeDatabaseConnection();
 
     return {
       items,
@@ -67,7 +66,9 @@ export class CourseService extends BaseService {
   }
 
   public async getCourseById(id: string): Promise<Course | null> {
-    const courseRepository = await this.getEntityRepository(Course);
+    const courseRepository = await this.databaseService.getEntityRepository(
+      Course
+    );
 
     const course = await courseRepository.findOne({
       where: {
@@ -76,13 +77,15 @@ export class CourseService extends BaseService {
       },
     });
 
-    await this.closeDatabaseConnection();
+    await this.databaseService.closeDatabaseConnection();
 
     return course;
   }
 
   public async createCourse(payload: CreateCourseDto): Promise<Course> {
-    const courseRepository = await this.getEntityRepository(Course);
+    const courseRepository = await this.databaseService.getEntityRepository(
+      Course
+    );
 
     const user = await this.userService.getUserByCognitoId(payload.userId);
 
@@ -97,7 +100,7 @@ export class CourseService extends BaseService {
 
     const courseCreated = await courseRepository.save(course);
 
-    await this.closeDatabaseConnection();
+    await this.databaseService.closeDatabaseConnection();
 
     return courseCreated;
   }
@@ -106,7 +109,9 @@ export class CourseService extends BaseService {
     id: string,
     course: UpdateCourseDto
   ): Promise<Course | null> {
-    const courseRepository = await this.getEntityRepository(Course);
+    const courseRepository = await this.databaseService.getEntityRepository(
+      Course
+    );
 
     const courseFound = await this.getCourseById(id);
 
@@ -119,13 +124,15 @@ export class CourseService extends BaseService {
       id,
     });
 
-    await this.closeDatabaseConnection();
+    await this.databaseService.closeDatabaseConnection();
 
     return updated;
   }
 
   public async deleteCourse(id: string): Promise<Course | null> {
-    const courseRepository = await this.getEntityRepository(Course);
+    const courseRepository = await this.databaseService.getEntityRepository(
+      Course
+    );
 
     const courseFound = await this.getCourseById(id);
 
@@ -138,7 +145,7 @@ export class CourseService extends BaseService {
       active: false,
     });
 
-    await this.closeDatabaseConnection();
+    await this.databaseService.closeDatabaseConnection();
 
     return course;
   }

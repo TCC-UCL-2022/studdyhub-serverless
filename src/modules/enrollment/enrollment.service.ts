@@ -1,26 +1,24 @@
 import { ConflictError, NotFoundError } from "../../common/errors";
-import { BaseService } from "../../common/services";
 import { Enrollment } from "../../entities";
 import { CourseService } from "../course";
+import { DatabaseService } from "../database";
 import { UserService } from "../user";
 import { CreateEnrollmentDto } from "./dto";
 
-export class EnrollmentService extends BaseService {
-  private readonly CourseService: CourseService;
-  private readonly UserService: UserService;
-
-  constructor() {
-    super();
-
-    this.CourseService = new CourseService();
-    this.UserService = new UserService();
-  }
+export class EnrollmentService {
+  constructor(
+    private readonly databaseService: DatabaseService,
+    private readonly CourseService: CourseService,
+    private readonly UserService: UserService
+  ) {}
 
   public async createErollment({
     courseId,
     userId,
   }: CreateEnrollmentDto): Promise<Enrollment> {
-    const enrollmentRepository = await this.getEntityRepository(Enrollment);
+    const enrollmentRepository = await this.databaseService.getEntityRepository(
+      Enrollment
+    );
 
     const user = await this.UserService.getUserById(userId);
     const course = await this.CourseService.getCourseById(courseId);
@@ -51,13 +49,15 @@ export class EnrollmentService extends BaseService {
 
     const createdEnrollment = await enrollmentRepository.save(enrollment);
 
-    await this.closeDatabaseConnection();
+    await this.databaseService.closeDatabaseConnection();
 
     return createdEnrollment;
   }
 
   public async getEnrollmentsByUserId(userId: string): Promise<Enrollment[]> {
-    const enrollmentRepository = await this.getEntityRepository(Enrollment);
+    const enrollmentRepository = await this.databaseService.getEntityRepository(
+      Enrollment
+    );
 
     const enrollments = await enrollmentRepository.find({
       where: {
@@ -68,7 +68,7 @@ export class EnrollmentService extends BaseService {
       relations: ["course"],
     });
 
-    await this.closeDatabaseConnection();
+    await this.databaseService.closeDatabaseConnection();
 
     return enrollments;
   }

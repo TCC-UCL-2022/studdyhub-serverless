@@ -1,7 +1,3 @@
-import { UserController } from "../../modules/user";
+import { userController } from "../../modules/factory";
 
-const controller = new UserController();
-
-export const createUser = controller.createUser.bind(controller);
-export const getUserByCognitoId =
-  controller.getUserByCognitoId.bind(controller);
+export const { createUser, getUserByCognitoId } = userController;

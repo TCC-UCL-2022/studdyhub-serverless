@@ -1,17 +1,13 @@
 import { DataSource, EntityTarget, Repository } from "typeorm";
 import { createDatabase } from "typeorm-extension";
+import { Logger } from "../../common/utils";
 import { dataSourceOptions } from "../../config/database";
-import { Logger } from "../utils";
 
-export class BaseService {
-  private readonly logger = Logger.createLogger("BaseService");
+export class DatabaseService {
+  private readonly logger = Logger.createLogger("Database");
   private readonly dataSource = new DataSource(dataSourceOptions);
 
   private async loadDatabase() {
-    if (this.dataSource.isInitialized) {
-      return;
-    }
-
     try {
       this.logger.debug("Loading database...");
       await createDatabase({

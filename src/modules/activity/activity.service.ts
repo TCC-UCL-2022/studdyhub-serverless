@@ -1,20 +1,19 @@
 import { BadRequestError } from "../../common/errors";
-import { BaseService } from "../../common/services";
 import { Activity } from "../../entities";
 import { CourseService } from "../course";
+import { DatabaseService } from "../database";
 import { CreateActivityDto } from "./dto";
 
-export class ActivityService extends BaseService {
-  private readonly courseService: CourseService;
-
-  constructor() {
-    super();
-
-    this.courseService = new CourseService();
-  }
+export class ActivityService {
+  constructor(
+    private readonly databaseService: DatabaseService,
+    private readonly courseService: CourseService
+  ) {}
 
   public async getCourseActivities(courseId: string): Promise<Activity[]> {
-    const activityRepository = await this.getEntityRepository(Activity);
+    const activityRepository = await this.databaseService.getEntityRepository(
+      Activity
+    );
 
     const activities = await activityRepository.find({
       where: {
@@ -25,7 +24,7 @@ export class ActivityService extends BaseService {
       },
     });
 
-    await this.closeDatabaseConnection();
+    await this.databaseService.closeDatabaseConnection();
 
     return activities;
   }
@@ -33,7 +32,9 @@ export class ActivityService extends BaseService {
   public async createCourseActivity(
     activityPayload: CreateActivityDto
   ): Promise<Activity> {
-    const activityRepository = await this.getEntityRepository(Activity);
+    const activityRepository = await this.databaseService.getEntityRepository(
+      Activity
+    );
 
     const course = await this.courseService.getCourseById(
       activityPayload.courseId
@@ -50,7 +51,7 @@ export class ActivityService extends BaseService {
 
     const createdActivity = await activityRepository.save(activity);
 
-    await this.closeDatabaseConnection();
+    await this.databaseService.closeDatabaseConnection();
 
     return createdActivity;
   }

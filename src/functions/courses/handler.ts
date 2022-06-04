@@ -1,9 +1,9 @@
-import { CourseController } from "../../modules/course";
+import { courseController } from "../../modules/factory";
 
-const controller = new CourseController();
-
-export const getAllCourses = controller.getAllCourses.bind(controller);
-export const createCourse = controller.createCourse.bind(controller);
-export const getCourseById = controller.getCourseById.bind(controller);
-export const updateCourse = controller.updateCourse.bind(controller);
-export const deleteCourse = controller.deleteCourse.bind(controller);
+export const {
+  createCourse,
+  deleteCourse,
+  getAllCourses,
+  getCourseById,
+  updateCourse,
+} = courseController;

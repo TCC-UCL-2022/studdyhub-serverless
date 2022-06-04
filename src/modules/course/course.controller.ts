@@ -7,11 +7,9 @@ import { CreateCourseDto, GetCoursesRequestDto, UpdateCourseDto } from "./dto";
 
 export class CourseController {
   private readonly logger: Logger;
-  private readonly courseService: CourseService;
 
-  constructor() {
+  constructor(private readonly courseService: CourseService) {
     this.logger = Logger.createLogger("CourseController");
-    this.courseService = new CourseService();
   }
 
   getAllCourses: Handler<HandlerEvent<GetCoursesRequestDto>> = async (

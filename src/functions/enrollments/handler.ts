@@ -1,7 +1,3 @@
-import { EnrollmentController } from "../../modules/enrollment";
+import { enrollmentController } from "../../modules/factory";
 
-const controller = new EnrollmentController();
-
-export const createErollment = controller.createErollment.bind(controller);
-export const getEnrollmentsByUserId =
-  controller.getEnrollmentsByUserId.bind(controller);
+export const { createErollment, getEnrollmentsByUserId } = enrollmentController;

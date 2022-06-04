@@ -1,9 +1,3 @@
-import { ActivityController } from "../../modules/activity";
+import { activityController } from "../../modules/factory";
 
-const controller = new ActivityController();
-
-export const getCourseActivities =
-  controller.getCourseActivities.bind(controller);
-
-export const createCourseActivity =
-  controller.createCourseActivity.bind(controller);
+export const { createCourseActivity, getCourseActivities } = activityController;

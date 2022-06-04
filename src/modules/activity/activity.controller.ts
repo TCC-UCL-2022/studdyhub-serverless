@@ -6,11 +6,9 @@ import { CreateActivityDto } from "./dto";
 
 export class ActivityController {
   private readonly logger: Logger;
-  private readonly activityService: ActivityService;
 
-  constructor() {
+  constructor(private readonly activityService: ActivityService) {
     this.logger = Logger.createLogger("ActivityController");
-    this.activityService = new ActivityService();
   }
 
   getCourseActivities: Handler<HandlerEvent<{ courseId: string }>> = async (

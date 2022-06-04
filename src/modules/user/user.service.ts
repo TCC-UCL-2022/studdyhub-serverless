@@ -1,11 +1,13 @@
 import { NotFoundError } from "../../common/errors";
-import { BaseService } from "../../common/services";
 import { User } from "../../entities";
+import { DatabaseService } from "../database";
 import { CreateUserDto } from "./dto";
 
-export class UserService extends BaseService {
+export class UserService {
+  constructor(private readonly databaseService: DatabaseService) {}
+
   public async getUserByCognitoId(cognitoId: string): Promise<User> {
-    const userRepository = await this.getEntityRepository(User);
+    const userRepository = await this.databaseService.getEntityRepository(User);
 
     const user = await userRepository.findOne({
       where: {
@@ -18,13 +20,13 @@ export class UserService extends BaseService {
       throw new NotFoundError("User not found");
     }
 
-    await this.closeDatabaseConnection();
+    await this.databaseService.closeDatabaseConnection();
 
     return user;
   }
 
   public async getUserById(id: string): Promise<User> {
-    const userRepository = await this.getEntityRepository(User);
+    const userRepository = await this.databaseService.getEntityRepository(User);
 
     const user = await userRepository.findOne({
       where: {
@@ -37,23 +39,23 @@ export class UserService extends BaseService {
       throw new NotFoundError("User not found");
     }
 
-    await this.closeDatabaseConnection();
+    await this.databaseService.closeDatabaseConnection();
 
     return user;
   }
 
   public async createUser(payload: CreateUserDto): Promise<User> {
-    const userRepository = await this.getEntityRepository(User);
+    const userRepository = await this.databaseService.getEntityRepository(User);
 
     const user = await userRepository.create(payload).save();
 
-    await this.closeDatabaseConnection();
+    await this.databaseService.closeDatabaseConnection();
 
     return user;
   }
 
   public async updateUser(id: string, user: Partial<User>): Promise<User> {
-    const userRepository = await this.getEntityRepository(User);
+    const userRepository = await this.databaseService.getEntityRepository(User);
 
     const existingUser = await userRepository.findOne({
       where: {
@@ -71,7 +73,7 @@ export class UserService extends BaseService {
       ...user,
     });
 
-    await this.closeDatabaseConnection();
+    await this.databaseService.closeDatabaseConnection();
 
     return updated;
   }

@@ -65,6 +65,7 @@ export class EnrollmentService extends BaseService {
           id: userId,
         },
       },
+      relations: ["course"],
     });
 
     await this.closeDatabaseConnection();

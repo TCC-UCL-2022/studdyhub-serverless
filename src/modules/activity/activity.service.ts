@@ -30,11 +30,10 @@ export class ActivityService {
   }
 
   public async createCourseActivity(
+    courseId: string,
     activityPayload: CreateActivityDto
   ): Promise<Activity> {
-    const course = await this.courseService.getCourseById(
-      activityPayload.courseId
-    );
+    const course = await this.courseService.getCourseById(courseId);
 
     if (!course) {
       throw new BadRequestError("Course not found");

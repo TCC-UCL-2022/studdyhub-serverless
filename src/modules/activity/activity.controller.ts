@@ -47,16 +47,19 @@ export class ActivityController {
     }
   };
 
-  createCourseActivity: Handler<HandlerEvent> = async (event) => {
+  createCourseActivity: Handler<HandlerEvent<{ courseId: string }>> = async (
+    event
+  ) => {
     try {
       const activityPayload: CreateActivityDto = JSON.parse(event.body);
 
       this.logger.debug(
         "[createCourseActivity] invoked for courseId:",
-        activityPayload.courseId
+        event.pathParameters.courseId
       );
 
       const activity = await this.activityService.createCourseActivity(
+        event.pathParameters.courseId,
         activityPayload
       );
 

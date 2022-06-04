@@ -75,6 +75,7 @@ export class CourseService {
         id,
         active: true,
       },
+      relations: ["activities"],
     });
 
     await this.databaseService.closeDatabaseConnection();

@@ -1,8 +1,8 @@
 import { Column, Entity, ManyToOne, OneToMany } from "typeorm";
-import { BaseCollection } from "../../common/entities";
-import { Activity } from "../activity";
-import { Enrollment } from "../enrollment";
-import { User } from "../user";
+import { BaseCollection } from "../common/entities";
+import { Activity } from "./activity";
+import { Enrollment } from "./enrollment";
+import { User } from "./user";
 
 @Entity("course")
 export class Course extends BaseCollection {

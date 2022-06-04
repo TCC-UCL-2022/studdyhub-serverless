@@ -1,12 +1,17 @@
-import { EntityTarget, Repository } from "typeorm";
+import { DataSource, EntityTarget, Repository } from "typeorm";
 import { createDatabase } from "typeorm-extension";
-import { dataSource, dataSourceOptions } from "../../config/database";
+import { dataSourceOptions } from "../../config/database";
 import { Logger } from "../utils";
 
 export class BaseService {
   private readonly logger = Logger.createLogger("BaseService");
+  private readonly dataSource = new DataSource(dataSourceOptions);
 
   private async loadDatabase() {
+    if (this.dataSource.isInitialized) {
+      return;
+    }
+
     try {
       this.logger.debug("Loading database...");
       await createDatabase({
@@ -19,14 +24,14 @@ export class BaseService {
 
     try {
       this.logger.debug("Synchronizing database...");
-      await dataSource.synchronize();
+      await this.dataSource.synchronize();
     } catch (error) {
       this.logger.error("Failed to synchronize database");
     }
 
     try {
       this.logger.debug("Initializing database");
-      await dataSource.initialize();
+      await this.dataSource.initialize();
     } catch (error) {
       this.logger.error("Failed to initialize database");
     }
@@ -39,6 +44,10 @@ export class BaseService {
   ): Promise<Repository<T>> {
     await this.loadDatabase();
 
-    return dataSource.getRepository(entity);
+    return this.dataSource.getRepository(entity);
+  }
+
+  public async closeDatabaseConnection() {
+    await this.dataSource.destroy();
   }
 }

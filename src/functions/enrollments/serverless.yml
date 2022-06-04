@@ -1,0 +1,13 @@
+createErollment:
+  handler: src/functions/enrollments/handler.createErollment
+  events:
+    - httpApi:
+        method: POST
+        path: /enrollments
+
+getEnrollmentsByUserId:
+  handler: src/functions/enrollments/handler.getEnrollmentsByUserId
+  events:
+    - httpApi:
+        method: GET
+        path: /enrollments/{userId}

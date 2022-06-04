@@ -1,8 +1,8 @@
 import { Column, Entity, ManyToOne, OneToMany } from "typeorm";
-import { BaseCollection } from "../../common/entities";
-import { ActivityType } from "../../common/enums";
-import { ActivityProgress } from "../activity-progress";
-import { Course } from "../course";
+import { BaseCollection } from "../common/entities";
+import { ActivityType } from "../common/enums";
+import { ActivityProgress } from "./activity-progress";
+import { Course } from "./course";
 
 @Entity("activity")
 export class Activity extends BaseCollection {

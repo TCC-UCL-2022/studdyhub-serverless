@@ -1,7 +1,7 @@
 import { NotFoundError } from "../../common/errors";
 import { BaseService } from "../../common/services";
+import { User } from "../../entities";
 import { CreateUserDto } from "./dto";
-import { User } from "./user.entity";
 
 export class UserService extends BaseService {
   public async getUserByCognitoId(cognitoId: string): Promise<User> {
@@ -18,13 +18,38 @@ export class UserService extends BaseService {
       throw new NotFoundError("User not found");
     }
 
+    await this.closeDatabaseConnection();
+
     return user;
   }
 
-  public async createUser(user: CreateUserDto): Promise<User> {
+  public async getUserById(id: string): Promise<User> {
     const userRepository = await this.getEntityRepository(User);
 
-    return await userRepository.save(user);
+    const user = await userRepository.findOne({
+      where: {
+        id,
+        active: true,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundError("User not found");
+    }
+
+    await this.closeDatabaseConnection();
+
+    return user;
+  }
+
+  public async createUser(payload: CreateUserDto): Promise<User> {
+    const userRepository = await this.getEntityRepository(User);
+
+    const user = await userRepository.create(payload).save();
+
+    await this.closeDatabaseConnection();
+
+    return user;
   }
 
   public async updateUser(id: string, user: Partial<User>): Promise<User> {
@@ -41,9 +66,13 @@ export class UserService extends BaseService {
       throw new NotFoundError("User not found");
     }
 
-    return await userRepository.save({
+    const updated = await userRepository.save({
       ...existingUser,
       ...user,
     });
+
+    await this.closeDatabaseConnection();
+
+    return updated;
   }
 }

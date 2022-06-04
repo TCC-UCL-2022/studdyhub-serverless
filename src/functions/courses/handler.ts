@@ -1,7 +1,4 @@
-import { dataSource } from "../../config/database";
 import { CourseController } from "../../modules/course";
-
-dataSource.initialize();
 
 const controller = new CourseController();
 

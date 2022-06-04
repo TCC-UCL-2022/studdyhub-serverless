@@ -2,8 +2,8 @@ import { FindOneOptions, ILike } from "typeorm";
 import { GetManyResponseDto } from "../../common/dto";
 import { BadRequestError, NotFoundError } from "../../common/errors";
 import { BaseService } from "../../common/services";
+import { Course } from "../../entities";
 import { UserService } from "../user";
-import { Course } from "./course.entity";
 import { CreateCourseDto, GetCoursesRequestDto, UpdateCourseDto } from "./dto";
 
 export class CourseService extends BaseService {
@@ -58,6 +58,8 @@ export class CourseService extends BaseService {
       relations: loadUser ? ["user"] : [],
     });
 
+    await this.closeDatabaseConnection();
+
     return {
       items,
       count,
@@ -67,12 +69,16 @@ export class CourseService extends BaseService {
   public async getCourseById(id: string): Promise<Course | null> {
     const courseRepository = await this.getEntityRepository(Course);
 
-    return await courseRepository.findOne({
+    const course = await courseRepository.findOne({
       where: {
         id,
         active: true,
       },
     });
+
+    await this.closeDatabaseConnection();
+
+    return course;
   }
 
   public async createCourse(payload: CreateCourseDto): Promise<Course> {
@@ -89,7 +95,11 @@ export class CourseService extends BaseService {
     course.description = payload.description;
     course.user = user;
 
-    return await courseRepository.save(course);
+    const courseCreated = await courseRepository.save(course);
+
+    await this.closeDatabaseConnection();
+
+    return courseCreated;
   }
 
   public async updateCourse(
@@ -104,10 +114,14 @@ export class CourseService extends BaseService {
       throw new NotFoundError("Course not found");
     }
 
-    return await courseRepository.save({
+    const updated = await courseRepository.save({
       ...course,
       id,
     });
+
+    await this.closeDatabaseConnection();
+
+    return updated;
   }
 
   public async deleteCourse(id: string): Promise<Course | null> {
@@ -119,9 +133,13 @@ export class CourseService extends BaseService {
       throw new NotFoundError("Course not found");
     }
 
-    return await courseRepository.save({
+    const course = await courseRepository.save({
       ...courseFound,
       active: false,
     });
+
+    await this.closeDatabaseConnection();
+
+    return course;
   }
 }

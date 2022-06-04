@@ -1,12 +1,12 @@
 import { Column, Entity, OneToMany } from "typeorm";
-import { UserBaseEntity } from "../../common/entities";
-import { Roles } from "../../common/enums";
-import { ActivityProgress } from "../activity-progress";
-import { Course } from "../course";
-import { Enrollment } from "../enrollment";
+import { BaseCollection } from "../common/entities";
+import { Roles } from "../common/enums";
+import { ActivityProgress } from "./activity-progress";
+import { Course } from "./course";
+import { Enrollment } from "./enrollment";
 
 @Entity("user")
-export class User extends UserBaseEntity {
+export class User extends BaseCollection {
   @Column({ name: "cognitoId", unique: true, nullable: false })
   cognitoId: string;
 

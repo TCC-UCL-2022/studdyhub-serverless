@@ -1,10 +1,12 @@
 import "reflect-metadata";
-import { DataSource, DataSourceOptions } from "typeorm";
-import { Activity } from "../../modules/activity";
-import { ActivityProgress } from "../../modules/activity-progress";
-import { Course } from "../../modules/course";
-import { Enrollment } from "../../modules/enrollment";
-import { User } from "../../modules/user";
+import { DataSourceOptions } from "typeorm";
+import {
+  Activity,
+  ActivityProgress,
+  Course,
+  Enrollment,
+  User,
+} from "../../entities";
 import { environments } from "../environment";
 
 export const dataSourceOptions: DataSourceOptions = {
@@ -19,5 +21,3 @@ export const dataSourceOptions: DataSourceOptions = {
   logger: "debug",
   entities: [ActivityProgress, Activity, Course, Enrollment, User],
 };
-
-export const dataSource = new DataSource(dataSourceOptions);

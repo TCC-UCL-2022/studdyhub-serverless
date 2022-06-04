@@ -16,3 +16,4 @@ functions:
   - ${file(./src/functions/courses/serverless.yml)}
   - ${file(./src/functions/users/serverless.yml)}
   - ${file(./src/functions/activities/serverless.yml)}
+  - ${file(./src/functions/enrollments/serverless.yml)}

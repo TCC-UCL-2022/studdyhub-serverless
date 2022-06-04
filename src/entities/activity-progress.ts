@@ -1,7 +1,7 @@
 import { Column, Entity, ManyToOne } from "typeorm";
-import { BaseCollection } from "../../common/entities";
-import { Activity } from "../activity/activity.entity";
-import { User } from "../user";
+import { BaseCollection } from "../common/entities";
+import { Activity } from "./activity";
+import { User } from "./user";
 
 @Entity("activity-progress")
 export class ActivityProgress extends BaseCollection {

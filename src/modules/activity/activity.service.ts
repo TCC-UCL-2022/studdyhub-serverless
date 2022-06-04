@@ -1,7 +1,7 @@
 import { BadRequestError } from "../../common/errors";
 import { BaseService } from "../../common/services";
+import { Activity } from "../../entities";
 import { CourseService } from "../course";
-import { Activity } from "./activity.entity";
 import { CreateActivityDto } from "./dto";
 
 export class ActivityService extends BaseService {
@@ -25,6 +25,8 @@ export class ActivityService extends BaseService {
       },
     });
 
+    await this.closeDatabaseConnection();
+
     return activities;
   }
 
@@ -46,6 +48,10 @@ export class ActivityService extends BaseService {
 
     activity.course = course;
 
-    return activityRepository.save(activity);
+    const createdActivity = await activityRepository.save(activity);
+
+    await this.closeDatabaseConnection();
+
+    return createdActivity;
   }
 }

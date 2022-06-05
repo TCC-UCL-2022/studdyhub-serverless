@@ -7,6 +7,14 @@ provider:
   profile: serverlessUser
   stage: ${opt:stage, 'dev'}
   environment: ${file(./serverless.env.${opt:stage, 'dev'}.yml)}
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - s3:*Bucket
+        - s3:*Object
+      Resource:
+        - "arn:aws:s3:::video-uploads00925-production/*"
+        - "arn:aws:s3:::video-uploads212329-dev/*"
 
 plugins:
   - serverless-plugin-typescript

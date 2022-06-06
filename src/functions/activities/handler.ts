@@ -13,11 +13,14 @@ export const activityPosProcessing: S3Handler = async (event) => {
       const bucket = record.s3.bucket.name;
       const key = record.s3.object.key;
       const params = {
-        Bucket: environments.S3_FRONTEND_UPLOAD_BUCKET,
+        Bucket: environments.S3_FRONTEND_BUCKET_DEV,
         Key: `protected/${key}`,
         CopySource: `${bucket}/${key}`,
       };
       await s3Manager.copyObject(params).promise();
+      await s3Manager
+        .copyObject({ ...params, Bucket: environments.S3_FRONTEND_BUCKET_PROD })
+        .promise();
     } catch (error) {
       console.log(error);
     }

@@ -20,4 +20,6 @@ export const environments = {
   S3_VIDEO_PROCESS_INPUT_BUCKET: getEnvironmentVariable(
     "S3_VIDEO_PROCESS_INPUT_BUCKET"
   ),
+  S3_FRONTEND_BUCKET_DEV: getEnvironmentVariable("S3_FRONTEND_BUCKET_DEV"),
+  S3_FRONTEND_BUCKET_PROD: getEnvironmentVariable("S3_FRONTEND_BUCKET_PROD"),
 };

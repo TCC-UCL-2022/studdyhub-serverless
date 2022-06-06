@@ -7,6 +7,8 @@ getCourseActivities:
 
 createCourseActivity:
   handler: src/functions/activities/handler.createCourseActivity
+  memorySize: 1024
+  timeout: 300
   events:
     - httpApi:
         method: POST

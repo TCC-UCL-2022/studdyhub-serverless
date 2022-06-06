@@ -1,8 +1,12 @@
+import { S3 } from "aws-sdk";
 import { BadRequestError } from "../../common/errors";
+import { environments } from "../../config/environment";
 import { Activity } from "../../entities";
 import { CourseService } from "../course";
 import { DatabaseService } from "../database";
 import { CreateActivityDto } from "./dto";
+
+const s3Manager = new S3();
 
 export class ActivityService {
   constructor(
@@ -49,6 +53,38 @@ export class ActivityService {
     activity.course = course;
 
     const createdActivity = await activityRepository.save(activity);
+
+    // Gamby from here
+    try {
+      const Key = `${createdActivity.id}.mkv`;
+      const CopySource = `${
+        environments.S3_FRONTEND_UPLOAD_BUCKET
+      }/public${activity.content.replace(
+        environments.S3_FRONTEND_UPLOAD_BUCKET,
+        ""
+      )}`;
+
+      console.log(CopySource);
+
+      await s3Manager
+        .copyObject({
+          Bucket: environments.S3_VIDEO_PROCESS_INPUT_BUCKET,
+          Key,
+          CopySource,
+        })
+        .promise();
+
+      await activityRepository.save({
+        ...createdActivity,
+        content: Key,
+      });
+    } catch (err) {
+      await activityRepository.delete({
+        id: createdActivity.id,
+      });
+
+      throw new BadRequestError((err as Error).message);
+    }
 
     await this.databaseService.closeDatabaseConnection();
 

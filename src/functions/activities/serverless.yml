@@ -22,3 +22,4 @@ activityPosProcessing:
         event: s3:ObjectCreated:*
         rules:
           - suffix: .mp4
+        existing: true

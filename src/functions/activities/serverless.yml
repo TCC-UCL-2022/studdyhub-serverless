@@ -13,3 +13,12 @@ createCourseActivity:
     - httpApi:
         method: POST
         path: /courses/{courseId}/activities
+
+activityPosProcessing:
+  handler: src/functions/activities/handler.activityPosProcessing
+  events:
+    - s3:
+        bucket: studdyhub-video-output
+        event: s3:ObjectCreated:*
+        rules:
+          - suffix: .mp4

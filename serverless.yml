@@ -16,6 +16,7 @@ provider:
         - "arn:aws:s3:::video-uploads00925-production/*"
         - "arn:aws:s3:::video-uploads212329-dev/*"
         - "arn:aws:s3:::studdyhub-video-input/*"
+        - "arn:aws:s3:::studdyhub-video-output/*"
 
 plugins:
   - serverless-plugin-typescript

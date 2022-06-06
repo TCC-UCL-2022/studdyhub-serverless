@@ -1,4 +1,5 @@
-import { Handler } from "aws-lambda";
+import { Handler, S3Handler } from "aws-lambda";
+import { BadRequestError } from "../../common/errors";
 import { HandlerEvent } from "../../common/types";
 import { Logger, MessageUtil } from "../../common/utils";
 import { ActivityService } from "./activity.service";
@@ -73,6 +74,28 @@ export class ActivityController {
       this.logger.error("[createCourseActivity] failed:", error);
 
       return MessageUtil.error(error);
+    }
+  };
+
+  activityPosProcessing: S3Handler = async (event) => {
+    for (const record of event.Records) {
+      try {
+        this.logger.debug(
+          "[activityPosProcessing] invoked for record:",
+          record
+        );
+        const result = await this.activityService.activityPosProcessing(record);
+
+        if (!result) {
+          throw new BadRequestError("Failed to process activity");
+        }
+
+        this.logger.debug(
+          "[activityPosProcessing] activity processed successfully"
+        );
+      } catch (error) {
+        this.logger.error("[activityPosProcessing] failed:", error);
+      }
     }
   };
 }

@@ -1,3 +1,4 @@
+import { S3EventRecord } from "aws-lambda";
 import { S3 } from "aws-sdk";
 import { BadRequestError } from "../../common/errors";
 import { environments } from "../../config/environment";
@@ -33,6 +34,28 @@ export class ActivityService {
     return activities;
   }
 
+  private async moveVideoToProcessingBucket(
+    activity: Activity
+  ): Promise<string> {
+    const Key = `${activity.id}.mkv`;
+    const CopySource = `${
+      environments.S3_FRONTEND_UPLOAD_BUCKET
+    }/public${activity.content.replace(
+      environments.S3_FRONTEND_UPLOAD_BUCKET,
+      ""
+    )}`;
+
+    await s3Manager
+      .copyObject({
+        Bucket: environments.S3_VIDEO_PROCESS_INPUT_BUCKET,
+        Key,
+        CopySource,
+      })
+      .promise();
+
+    return Key;
+  }
+
   public async createCourseActivity(
     courseId: string,
     activityPayload: CreateActivityDto
@@ -54,29 +77,14 @@ export class ActivityService {
 
     const createdActivity = await activityRepository.save(activity);
 
-    // Gamby from here
     try {
-      const Key = `${createdActivity.id}.mkv`;
-      const CopySource = `${
-        environments.S3_FRONTEND_UPLOAD_BUCKET
-      }/public${activity.content.replace(
-        environments.S3_FRONTEND_UPLOAD_BUCKET,
-        ""
-      )}`;
-
-      console.log(CopySource);
-
-      await s3Manager
-        .copyObject({
-          Bucket: environments.S3_VIDEO_PROCESS_INPUT_BUCKET,
-          Key,
-          CopySource,
-        })
-        .promise();
+      const newContent = await this.moveVideoToProcessingBucket(
+        createdActivity
+      );
 
       await activityRepository.save({
         ...createdActivity,
-        content: Key,
+        content: newContent,
       });
     } catch (err) {
       await activityRepository.delete({
@@ -90,4 +98,22 @@ export class ActivityService {
 
     return createdActivity;
   }
+
+  public activityPosProcessing = async (
+    record: S3EventRecord
+  ): Promise<boolean> => {
+    const bucket = record.s3.bucket.name;
+    const key = record.s3.object.key;
+    const params = {
+      Bucket: environments.S3_FRONTEND_BUCKET_DEV,
+      Key: `protected/${key}`,
+      CopySource: `${bucket}/${key}`,
+    };
+    await s3Manager.copyObject(params).promise();
+    await s3Manager
+      .copyObject({ ...params, Bucket: environments.S3_FRONTEND_BUCKET_PROD })
+      .promise();
+
+    return true;
+  };
 }

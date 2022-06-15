@@ -1,107 +1,83 @@
-import { FindOneOptions, ILike } from "typeorm";
 import { GetManyResponseDto } from "../../common/dto";
 import { BadRequestError, NotFoundError } from "../../common/errors";
-import { Course } from "../../entities";
-import { DatabaseService } from "../database";
+import { Course, CourseModel } from "../../models";
 import { UserService } from "../user";
 import { CreateCourseDto, GetCoursesRequestDto, UpdateCourseDto } from "./dto";
 
 export class CourseService {
   constructor(
-    private readonly databaseService: DatabaseService,
+    private readonly courseModel: typeof CourseModel,
     private readonly userService: UserService
   ) {}
 
   public async getAllCourses({
     query,
-    skip = 0,
-    take = 50,
-    orderBy,
-    orderDirection,
     loadUser = false,
-    userId,
-    published,
+    published = true,
   }: GetCoursesRequestDto): Promise<GetManyResponseDto<Course>> {
-    const courseRepository = await this.databaseService.getEntityRepository(
-      Course
-    );
+    const scan = this.courseModel.scan().where("published").eq(published);
 
-    const baseWhere: FindOneOptions<Course>["where"] = {
-      active: true,
-      ...(published && { published: true }),
-      ...(userId && { user: { id: userId } }),
-    };
+    if (query) {
+      scan
+        .and()
+        .parenthesis((condition) =>
+          condition
+            .where("title")
+            .contains(query)
+            .or()
+            .where("description")
+            .contains(query)
+        );
+    }
 
-    const [items, count] = await courseRepository.findAndCount({
-      where: [
-        {
-          ...baseWhere,
-          ...(query && {
-            title: ILike(`%${query}%`),
-          }),
-        },
-        {
-          ...baseWhere,
-          ...(query && {
-            description: ILike(`%${query}%`),
-          }),
-        },
-      ],
-      skip,
-      take,
-      order: {
-        ...(orderBy && {
-          [orderBy]: orderDirection ?? "ASC",
-        }),
-      },
-      relations: loadUser ? ["user"] : [],
-    });
+    const courses = await scan.parallel(2).all().exec();
 
-    await this.databaseService.closeDatabaseConnection();
+    if (loadUser) {
+      await courses.populate();
+    }
 
     return {
-      items,
-      count,
+      items: courses,
+      count: courses.count,
     };
   }
 
-  public async getCourseById(id: string): Promise<Course | null> {
-    const courseRepository = await this.databaseService.getEntityRepository(
-      Course
-    );
+  public async getCoursesByUserId(userId: string): Promise<Course[]> {
+    const courses = await this.courseModel.query("user").eq(userId).exec();
 
-    const course = await courseRepository.findOne({
-      where: {
-        id,
-        active: true,
-      },
-      relations: ["activities"],
+    return courses;
+  }
+
+  public async getCourseById(id: string): Promise<Course> {
+    const course = await this.courseModel.get({
+      id,
     });
 
-    await this.databaseService.closeDatabaseConnection();
+    if (!course) {
+      throw new NotFoundError("Course not found");
+    }
+
+    await course.populate();
 
     return course;
   }
 
-  public async createCourse(payload: CreateCourseDto): Promise<Course> {
-    const user = await this.userService.getUserByCognitoId(payload.userId);
+  public async createCourse({
+    description,
+    title,
+    userId,
+  }: CreateCourseDto): Promise<Course> {
+    const user = await this.userService.getUserById(userId);
 
     if (!user) {
       throw new BadRequestError("User not found");
     }
 
-    const courseRepository = await this.databaseService.getEntityRepository(
-      Course
-    );
-
-    const course = new Course();
-    course.title = payload.title;
-    course.description = payload.description;
-    course.user = user;
-
-    const courseCreated = await courseRepository.save(course);
-
-    await this.databaseService.closeDatabaseConnection();
+    const courseCreated = await this.courseModel.create({
+      title,
+      description,
+      user,
+    });
 
     return courseCreated;
   }
@@ -110,43 +86,17 @@ export class CourseService {
     id: string,
     course: UpdateCourseDto
   ): Promise<Course | null> {
-    const courseFound = await this.getCourseById(id);
+    await this.getCourseById(id);
 
-    if (!courseFound) {
-      throw new NotFoundError("Course not found");
-    }
-
-    const courseRepository = await this.databaseService.getEntityRepository(
-      Course
-    );
-
-    const updated = await courseRepository.save({
-      ...course,
-      id,
-    });
-
-    await this.databaseService.closeDatabaseConnection();
+    const updated = await this.courseModel.update({ id }, { ...course });
 
     return updated;
   }
 
   public async deleteCourse(id: string): Promise<Course | null> {
-    const courseFound = await this.getCourseById(id);
+    const course = await this.getCourseById(id);
 
-    if (!courseFound) {
-      throw new NotFoundError("Course not found");
-    }
-
-    const courseRepository = await this.databaseService.getEntityRepository(
-      Course
-    );
-
-    const course = await courseRepository.save({
-      ...courseFound,
-      active: false,
-    });
-
-    await this.databaseService.closeDatabaseConnection();
+    await this.courseModel.delete(id);
 
     return course;
   }

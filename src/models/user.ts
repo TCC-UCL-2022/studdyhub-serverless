@@ -1,6 +1,7 @@
 import * as dynamoose from "dynamoose";
 import { Roles } from "../common/enums";
 import { BaseModel } from "../common/model/base-model";
+import { generateUuid } from "../common/utils";
 
 export class User extends BaseModel {
   cognitoId: string;
@@ -14,14 +15,14 @@ const schema = new dynamoose.Schema(
     id: {
       type: String,
       hashKey: true,
-      required: true,
+      default: generateUuid(),
+      forceDefault: true,
     },
     cognitoId: {
       type: String,
       required: true,
       index: {
-        global: true,
-        name: "CognitoIdIndex",
+        name: "cognitoId-index",
       },
     },
     name: {
@@ -31,7 +32,6 @@ const schema = new dynamoose.Schema(
     email: {
       type: String,
       required: true,
-      rangeKey: true,
       validate: /.+@.+/gu,
     },
     role: {
@@ -45,11 +45,4 @@ const schema = new dynamoose.Schema(
   }
 );
 
-export const UserModel = dynamoose.model<User>("usertable", schema, {
-  create: true,
-  update: true,
-  throughput: {
-    read: 5,
-    write: 5,
-  },
-});
+export const UserModel = dynamoose.model<User>("user", schema);

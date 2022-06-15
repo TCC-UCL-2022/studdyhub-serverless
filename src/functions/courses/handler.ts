@@ -5,5 +5,6 @@ export const {
   deleteCourse,
   getAllCourses,
   getCourseById,
+  getCoursesByUserId,
   updateCourse,
 } = courseController;

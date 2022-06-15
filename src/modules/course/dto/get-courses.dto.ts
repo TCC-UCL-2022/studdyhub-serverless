@@ -1,8 +1,5 @@
-import { GetManyRequestDto } from "../../../common/dto";
-
-export interface GetCoursesRequestDto extends GetManyRequestDto {
+export interface GetCoursesRequestDto {
   query?: string;
   loadUser?: boolean;
-  userId?: string;
   published?: boolean;
 }

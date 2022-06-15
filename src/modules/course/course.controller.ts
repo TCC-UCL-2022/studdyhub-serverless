@@ -55,6 +55,24 @@ export class CourseController {
     }
   };
 
+  getCoursesByUserId: Handler<HandlerEvent<{ id: string }>> = async (event) => {
+    try {
+      const { id } = event.pathParameters;
+
+      this.logger.debug("[getCoursesByUserId] invoked for userId:", id);
+
+      const courses = await this.courseService.getCoursesByUserId(id);
+
+      this.logger.debug(`[getCoursesByUserId] found ${courses.length} courses`);
+
+      return MessageUtil.success(courses);
+    } catch (err) {
+      this.logger.error("[getCoursesByUserId] failed:", err);
+
+      return MessageUtil.error(err);
+    }
+  };
+
   createCourse: Handler<HandlerEvent<CreateCourseDto>> = async (event) => {
     this.logger.debug("[createCourse] invoked");
 

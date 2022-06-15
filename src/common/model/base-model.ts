@@ -1,6 +1,6 @@
-import { Document } from "dynamoose/dist/Document";
+import { Item } from "dynamoose/dist/Item";
 
-export class BaseModel extends Document {
+export class BaseModel extends Item {
   id: string;
   createdAt: Date;
   updatedAt: Date;

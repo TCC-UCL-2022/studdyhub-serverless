@@ -10,7 +10,7 @@ function getEnvironmentVariable(name: string): string {
 
 export const environments = {
   NODE_ENV: getEnvironmentVariable("NODE_ENV"),
-  DB_URL: process.env.DB_URL,
+  DB_URL: getEnvironmentVariable("DB_URL"),
   S3_FRONTEND_UPLOAD_BUCKET: getEnvironmentVariable(
     "S3_FRONTEND_UPLOAD_BUCKET"
   ),

@@ -1,16 +1,12 @@
-import { v4 as uuidV4 } from "uuid";
 import { ConflictError, NotFoundError } from "../../common/errors";
 import { User, UserModel } from "../../models";
-import { CreateUserDto, UpdateUserDto } from "./dto";
+import { CreateUserDto } from "./dto";
 
 export class UserService {
   constructor(private readonly userModel: typeof UserModel) {}
 
   public async getUserByCognitoId(cognitoId: string): Promise<User> {
-    const result = await UserModel.query("cognitoId")
-      .eq(cognitoId)
-      .using("CognitoIdIndex")
-      .exec();
+    const result = await UserModel.query("cognitoId").eq(cognitoId).exec();
 
     if (!result.length) {
       throw new NotFoundError("User not found");
@@ -20,15 +16,15 @@ export class UserService {
   }
 
   public async getUserById(id: string): Promise<User> {
-    const user = await UserModel.get({
+    const user = await UserModel.query({
       id,
-    });
+    }).exec();
 
-    if (!user) {
+    if (!user.length) {
       throw new NotFoundError("User not found");
     }
 
-    return user;
+    return user[0];
   }
 
   public async createUser({
@@ -40,7 +36,6 @@ export class UserService {
     const existingUser = await this.userModel
       .query("cognitoId")
       .eq(cognitoId)
-      .using("CognitoIdIndex")
       .exec();
 
     if (existingUser.length > 0) {
@@ -48,7 +43,6 @@ export class UserService {
     }
 
     const user = await this.userModel.create({
-      id: uuidV4(),
       cognitoId,
       email,
       name,
@@ -56,11 +50,5 @@ export class UserService {
     });
 
     return user;
-  }
-
-  public async updateUser(id: string, data: UpdateUserDto): Promise<User> {
-    const updated = await this.userModel.update({ id }, { ...data });
-
-    return updated;
   }
 }

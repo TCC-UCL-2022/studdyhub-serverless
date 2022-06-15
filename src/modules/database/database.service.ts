@@ -1,49 +1,27 @@
-import { DataSource, EntityTarget, Repository } from "typeorm";
-import { createDatabase } from "typeorm-extension";
+import * as dynamoose from "dynamoose";
+import { Table } from "dynamoose/dist/Table";
 import { Logger } from "../../common/utils";
-import { dataSourceOptions } from "../../config/database";
-
+import {
+  ActivityModel,
+  CourseModel,
+  EnrollmentModel,
+  UserModel,
+} from "../../models";
 export class DatabaseService {
   private readonly logger = Logger.createLogger("Database");
-  private readonly dataSource = new DataSource(dataSourceOptions);
 
-  private async loadDatabase() {
-    try {
-      this.logger.debug("Loading database...");
-      await createDatabase({
-        options: dataSourceOptions,
-        ifNotExist: true,
-      });
-    } catch (err) {
-      this.logger.error("Failed to load database");
-    }
+  public createTable(): Table {
+    this.logger.info("Creating table");
 
-    try {
-      this.logger.debug("Synchronizing database...");
-      await this.dataSource.synchronize();
-    } catch (error) {
-      this.logger.error("Failed to synchronize database");
-    }
+    const table = new dynamoose.Table(
+      "studdyhub",
+      [ActivityModel, CourseModel, EnrollmentModel, UserModel],
+      {
+        create: true,
+        update: true,
+      }
+    );
 
-    try {
-      this.logger.debug("Initializing database");
-      await this.dataSource.initialize();
-    } catch (error) {
-      this.logger.error("Failed to initialize database");
-    }
-
-    this.logger.debug("Database loaded");
-  }
-
-  public async getEntityRepository<T>(
-    entity: EntityTarget<T>
-  ): Promise<Repository<T>> {
-    await this.loadDatabase();
-
-    return this.dataSource.getRepository(entity);
-  }
-
-  public async closeDatabaseConnection() {
-    await this.dataSource.destroy();
+    return table;
   }
 }

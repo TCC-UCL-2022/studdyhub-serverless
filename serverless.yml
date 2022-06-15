@@ -44,3 +44,4 @@ functions:
   - ${file(./src/functions/users/serverless.yml)}
   - ${file(./src/functions/activities/serverless.yml)}
   - ${file(./src/functions/enrollments/serverless.yml)}
+  - ${file(./src/functions/database/serverless.yml)}

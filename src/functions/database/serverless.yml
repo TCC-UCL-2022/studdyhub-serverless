@@ -1,0 +1,6 @@
+initializeDatabase:
+  handler: src/functions/database/handler.initializeDatabase
+  events:
+    - httpApi:
+        method: GET
+        path: /database

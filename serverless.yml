@@ -27,6 +27,12 @@ provider:
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
         - dynamodb:CreateTable
+        - dynamodb:UpdateTable
+        - dynamodb:UpdateTimeToLive
+        - dynamodb:DescribeTimeToLive
+        - dynamodb:ListTagsOfResource
+        - dynamodb:TagResource
+        - dynamodb:UntagResource
       Resource: "*"
 
 plugins:

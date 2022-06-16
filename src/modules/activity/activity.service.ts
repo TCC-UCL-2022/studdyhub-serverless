@@ -1,26 +1,26 @@
 import { S3EventRecord } from "aws-lambda";
 import { S3 } from "aws-sdk";
 import { injectable } from "inversify";
+import { ActivityType } from "../../common/enums";
 import { BadRequestError } from "../../common/errors";
+import { generateUuid } from "../../common/utils";
 import { environments } from "../../config/environment";
-import { Activity, ActivityModel } from "../../models";
+import { Activity } from "../../models";
 import { CourseService } from "../course";
 import { DatabaseService } from "../database";
+import { UserService } from "../user";
 import { CreateActivityDto } from "./dto";
 
 const s3Manager = new S3();
 
 @injectable()
-export class ActivityService {
-  constructor(
-    private readonly databaseService: DatabaseService,
-    private readonly courseService: CourseService
-  ) {
-    this.databaseService.initializeTableWihtoutCreating(ActivityModel);
+export class ActivityService extends CourseService {
+  constructor(userService: UserService, databaseService: DatabaseService) {
+    super(userService, databaseService);
   }
 
   public async getCourseActivities(courseId: string): Promise<Activity[]> {
-    const course = await this.courseService.getCourseById(courseId);
+    const course = await this.getCourseById(courseId);
 
     return course.activities;
   }
@@ -49,26 +49,29 @@ export class ActivityService {
 
   public async createCourseActivity(
     courseId: string,
-    { content, title, type, description }: CreateActivityDto
+    {
+      content,
+      title,
+      type = ActivityType.VIDEO,
+      description,
+    }: CreateActivityDto
   ): Promise<Activity> {
-    const course = await this.courseService.getCourseById(courseId);
+    const course = await this.getCourseById(courseId);
 
-    const activity = await ActivityModel.create({
+    const activity: Activity = {
+      id: generateUuid(),
       content,
       title,
       type,
       description,
-    });
+    };
 
     if (type === "video") {
       try {
         const newContent = await this.moveVideoToProcessingBucket(activity);
 
         activity.content = newContent;
-        await activity.save();
       } catch (err) {
-        await activity.delete();
-
         throw new BadRequestError((err as Error).message);
       }
     }

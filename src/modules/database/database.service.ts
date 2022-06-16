@@ -4,17 +4,13 @@ import { Item } from "dynamoose/dist/Item";
 import { Table, TableOptions } from "dynamoose/dist/Table";
 import { injectable } from "inversify";
 import { Logger } from "../../common/utils";
-import {
-  ActivityModel,
-  CourseModel,
-  EnrollmentModel,
-  UserModel,
-} from "../../models";
+import { environments } from "../../config/environment";
+import { CourseModel, EnrollmentModel, UserModel } from "../../models";
 
 const defaultConfig: Partial<TableOptions> = {
   initialize: false,
   create: true,
-  update: false,
+  update: environments.NODE_ENV === "production" ? true : false,
   prefix: "studdyhub_",
 };
 
@@ -35,7 +31,7 @@ export class DatabaseService {
   public async initializeTables(): Promise<void> {
     this.logger.info("Creating tables");
 
-    const models = [ActivityModel, CourseModel, EnrollmentModel, UserModel];
+    const models = [CourseModel, EnrollmentModel, UserModel];
 
     const tables = models.map((model) => this.createModelTable(model));
 
@@ -52,8 +48,10 @@ export class DatabaseService {
     try {
       const table = this.createModelTable(model, {
         create: false,
+        update: false,
         waitForActive: false,
       });
+
       await table.initialize();
     } catch (error) {
       this.logger.error(`Failed to initialize table for model [${model.name}]`);

@@ -5,7 +5,7 @@ import {
   ActivityModel,
   CourseModel,
   EnrollmentModel,
-  UserModel,
+  UserModel
 } from "../../models";
 export class DatabaseService {
   private readonly logger = Logger.createLogger("Database");
@@ -17,6 +17,7 @@ export class DatabaseService {
       "studdyhub",
       [ActivityModel, CourseModel, EnrollmentModel, UserModel],
       {
+        initialize:false,
         create: true,
         update: true,
       }

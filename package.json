@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "local": "serverless offline --httpPort 3001",
-    "deploy": "serverless deploy --stage prod"
+    "deploy": "serverless deploy --stage prod",
+    "database": "serverless invoke local --function initializeDatabase"
   },
   "repository": {
     "type": "git",

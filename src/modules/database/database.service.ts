@@ -1,28 +1,34 @@
 import * as dynamoose from "dynamoose";
-import { Table } from "dynamoose/dist/Table";
+import { ModelType } from "dynamoose/dist/General";
+import { Table, TableOptions } from "dynamoose/dist/Table";
 import { Logger } from "../../common/utils";
 import {
   ActivityModel,
   CourseModel,
   EnrollmentModel,
-  UserModel
+  UserModel,
 } from "../../models";
+
+const defaultConfig: Partial<TableOptions> = {
+  initialize: false,
+  create: true,
+  update: false,
+  prefix: "studdyhub_",
+};
 export class DatabaseService {
   private readonly logger = Logger.createLogger("Database");
 
-  public createTable(): Table {
+  private createModelTable(model: ModelType<any>): Table {
+    return new dynamoose.Table(model.tableName, [model], defaultConfig);
+  }
+
+  public createTables(): Table[] {
     this.logger.info("Creating table");
 
-    const table = new dynamoose.Table(
-      "studdyhub",
-      [ActivityModel, CourseModel, EnrollmentModel, UserModel],
-      {
-        initialize:false,
-        create: true,
-        update: true,
-      }
-    );
+    const models = [ActivityModel, CourseModel, EnrollmentModel, UserModel];
 
-    return table;
+    const tables = models.map((model) => this.createModelTable(model));
+
+    return tables;
   }
 }

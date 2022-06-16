@@ -23,15 +23,9 @@ const schema = new dynamoose.Schema(
     title: {
       type: String,
       required: true,
-      index: {
-        name: "title-index",
-      },
     },
     description: {
       type: String,
-      index: {
-        name: "description-index",
-      },
     },
     published: {
       type: Boolean,

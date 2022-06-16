@@ -1,6 +1,6 @@
 initializeDatabase:
   handler: src/functions/database/handler.initializeDatabase
-  timeout: 300
+  timeout: 30
   events:
     - httpApi:
         method: GET

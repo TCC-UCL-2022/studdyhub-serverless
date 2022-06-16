@@ -1,9 +1,11 @@
 import { Handler } from "aws-lambda";
+import { injectable } from "inversify";
 import { HandlerEvent } from "../../common/types";
 import { Logger, MessageUtil } from "../../common/utils";
 import { CreateEnrollmentDto } from "./dto";
 import { EnrollmentService } from "./enrollment.service";
 
+@injectable()
 export class EnrollmentController {
   private readonly logger: Logger;
 

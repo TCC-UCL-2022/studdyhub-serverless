@@ -1,10 +1,12 @@
 import { Handler } from "aws-lambda";
+import { injectable } from "inversify";
 import { NotFoundError } from "../../common/errors";
 import { HandlerEvent } from "../../common/types";
 import { Logger, MessageUtil } from "../../common/utils";
 import { CourseService } from "./course.service";
 import { CreateCourseDto, GetCoursesRequestDto, UpdateCourseDto } from "./dto";
 
+@injectable()
 export class CourseController {
   private readonly logger: Logger;
 

@@ -1,18 +1,23 @@
 import { S3EventRecord } from "aws-lambda";
 import { S3 } from "aws-sdk";
+import { injectable } from "inversify";
 import { BadRequestError } from "../../common/errors";
 import { environments } from "../../config/environment";
 import { Activity, ActivityModel } from "../../models";
 import { CourseService } from "../course";
+import { DatabaseService } from "../database";
 import { CreateActivityDto } from "./dto";
 
 const s3Manager = new S3();
 
+@injectable()
 export class ActivityService {
   constructor(
-    private readonly activityModel: typeof ActivityModel,
+    private readonly databaseService: DatabaseService,
     private readonly courseService: CourseService
-  ) {}
+  ) {
+    this.databaseService.initializeTableWihtoutCreating(ActivityModel);
+  }
 
   public async getCourseActivities(courseId: string): Promise<Activity[]> {
     const course = await this.courseService.getCourseById(courseId);
@@ -48,7 +53,7 @@ export class ActivityService {
   ): Promise<Activity> {
     const course = await this.courseService.getCourseById(courseId);
 
-    const activity = await this.activityModel.create({
+    const activity = await ActivityModel.create({
       content,
       title,
       type,

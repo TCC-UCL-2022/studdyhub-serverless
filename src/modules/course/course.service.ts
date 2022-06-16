@@ -1,21 +1,26 @@
+import { injectable } from "inversify";
 import { GetManyResponseDto } from "../../common/dto";
 import { BadRequestError, NotFoundError } from "../../common/errors";
 import { Course, CourseModel } from "../../models";
+import { DatabaseService } from "../database";
 import { UserService } from "../user";
 import { CreateCourseDto, GetCoursesRequestDto, UpdateCourseDto } from "./dto";
 
+@injectable()
 export class CourseService {
   constructor(
-    private readonly courseModel: typeof CourseModel,
-    private readonly userService: UserService
-  ) {}
+    private readonly userService: UserService,
+    private readonly databaseService: DatabaseService
+  ) {
+    this.databaseService.initializeTableWihtoutCreating(CourseModel);
+  }
 
   public async getAllCourses({
     query,
     loadUser = false,
     published = true,
   }: GetCoursesRequestDto): Promise<GetManyResponseDto<Course>> {
-    const scan = this.courseModel.scan().where("published").eq(published);
+    const scan = CourseModel.scan().where("published").eq(published);
 
     if (query) {
       scan
@@ -43,13 +48,13 @@ export class CourseService {
   }
 
   public async getCoursesByUserId(userId: string): Promise<Course[]> {
-    const courses = await this.courseModel.query("user").eq(userId).exec();
+    const courses = await CourseModel.query("user").eq(userId).exec();
 
     return courses;
   }
 
   public async getCourseById(id: string): Promise<Course> {
-    const course = await this.courseModel.get({
+    const course = await CourseModel.get({
       id,
     });
 
@@ -73,7 +78,7 @@ export class CourseService {
       throw new BadRequestError("User not found");
     }
 
-    const courseCreated = await this.courseModel.create({
+    const courseCreated = await CourseModel.create({
       title,
       description,
       user,
@@ -88,7 +93,7 @@ export class CourseService {
   ): Promise<Course | null> {
     await this.getCourseById(id);
 
-    const updated = await this.courseModel.update({ id }, { ...course });
+    const updated = await CourseModel.update({ id }, { ...course });
 
     return updated;
   }
@@ -96,7 +101,7 @@ export class CourseService {
   public async deleteCourse(id: string): Promise<Course | null> {
     const course = await this.getCourseById(id);
 
-    await this.courseModel.delete(id);
+    await CourseModel.delete(id);
 
     return course;
   }

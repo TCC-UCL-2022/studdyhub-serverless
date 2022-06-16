@@ -1,15 +1,20 @@
+import { injectable } from "inversify";
 import { ConflictError } from "../../common/errors";
 import { Enrollment, EnrollmentModel } from "../../models";
 import { CourseService } from "../course";
+import { DatabaseService } from "../database";
 import { UserService } from "../user";
 import { CreateEnrollmentDto } from "./dto";
 
+@injectable()
 export class EnrollmentService {
   constructor(
-    private readonly enrollmentModel: typeof EnrollmentModel,
+    private readonly databaseService: DatabaseService,
     private readonly CourseService: CourseService,
     private readonly UserService: UserService
-  ) {}
+  ) {
+    this.databaseService.initializeTableWihtoutCreating(EnrollmentModel);
+  }
 
   public async createErollment({
     courseId,
@@ -18,8 +23,7 @@ export class EnrollmentService {
     const user = await this.UserService.getUserById(userId);
     const course = await this.CourseService.getCourseById(courseId);
 
-    const existingEnrollment = await this.enrollmentModel
-      .scan("course")
+    const existingEnrollment = await EnrollmentModel.scan("course")
       .eq(courseId)
       .and()
       .where("user")
@@ -32,7 +36,7 @@ export class EnrollmentService {
       );
     }
 
-    const createdEnrollment = await this.enrollmentModel.create({
+    const createdEnrollment = await EnrollmentModel.create({
       course,
       user,
     });
@@ -41,10 +45,7 @@ export class EnrollmentService {
   }
 
   public async getEnrollmentsByUserId(userId: string): Promise<Enrollment[]> {
-    const enrollments = await this.enrollmentModel
-      .query("user")
-      .eq(userId)
-      .exec();
+    const enrollments = await EnrollmentModel.query("user").eq(userId).exec();
 
     await enrollments.populate();
 

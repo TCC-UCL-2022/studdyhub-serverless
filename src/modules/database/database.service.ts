@@ -2,6 +2,7 @@ import * as dynamoose from "dynamoose";
 import { ModelType } from "dynamoose/dist/General";
 import { Item } from "dynamoose/dist/Item";
 import { Table, TableOptions } from "dynamoose/dist/Table";
+import { injectable } from "inversify";
 import { Logger } from "../../common/utils";
 import {
   ActivityModel,
@@ -16,6 +17,8 @@ const defaultConfig: Partial<TableOptions> = {
   update: false,
   prefix: "studdyhub_",
 };
+
+@injectable()
 export class DatabaseService {
   private readonly logger = Logger.createLogger("Database");
 
@@ -46,10 +49,14 @@ export class DatabaseService {
   ): Promise<void> {
     this.logger.info(`Initializing table for model [${model.name}]`);
 
-    const table = this.createModelTable(model, {
-      create: false,
-      waitForActive: false,
-    });
-    await table.initialize();
+    try {
+      const table = this.createModelTable(model, {
+        create: false,
+        waitForActive: false,
+      });
+      await table.initialize();
+    } catch (error) {
+      this.logger.error(`Failed to initialize table for model [${model.name}]`);
+    }
   }
 }

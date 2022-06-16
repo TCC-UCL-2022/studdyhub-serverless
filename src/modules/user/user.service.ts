@@ -1,9 +1,14 @@
+import { injectable } from "inversify";
 import { ConflictError, NotFoundError } from "../../common/errors";
 import { User, UserModel } from "../../models";
+import { DatabaseService } from "../database";
 import { CreateUserDto } from "./dto";
 
+@injectable()
 export class UserService {
-  constructor(private readonly userModel: typeof UserModel) {}
+  constructor(private readonly databaseService: DatabaseService) {
+    this.databaseService.initializeTableWihtoutCreating(UserModel);
+  }
 
   public async getUserByCognitoId(cognitoId: string): Promise<User> {
     const result = await UserModel.query("cognitoId").eq(cognitoId).exec();
@@ -33,8 +38,7 @@ export class UserService {
     name,
     role,
   }: CreateUserDto): Promise<User> {
-    const existingUser = await this.userModel
-      .query("cognitoId")
+    const existingUser = await UserModel.query("cognitoId")
       .eq(cognitoId)
       .exec();
 
@@ -42,7 +46,7 @@ export class UserService {
       throw new ConflictError("User already exists");
     }
 
-    const user = await this.userModel.create({
+    const user = await UserModel.create({
       cognitoId,
       email,
       name,

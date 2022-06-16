@@ -1,10 +1,12 @@
 import { Handler, S3Handler } from "aws-lambda";
+import { injectable } from "inversify";
 import { BadRequestError } from "../../common/errors";
 import { HandlerEvent } from "../../common/types";
 import { Logger, MessageUtil } from "../../common/utils";
 import { ActivityService } from "./activity.service";
 import { CreateActivityDto } from "./dto";
 
+@injectable()
 export class ActivityController {
   private readonly logger: Logger;
 

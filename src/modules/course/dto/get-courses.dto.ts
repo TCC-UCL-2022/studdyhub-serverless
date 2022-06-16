@@ -1,5 +1,5 @@
 export interface GetCoursesRequestDto {
   query?: string;
-  loadUser?: boolean;
-  published?: boolean;
+  loadUser?: "true" | "false";
+  published?: "true" | "false";
 }

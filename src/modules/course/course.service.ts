@@ -17,10 +17,13 @@ export class CourseService {
 
   public async getAllCourses({
     query,
-    loadUser = false,
-    published = true,
+    loadUser = "false",
+    published = "true",
   }: GetCoursesRequestDto): Promise<GetManyResponseDto<Course>> {
-    const scan = CourseModel.scan().where("published").eq(published);
+    const isPublished = published === "true";
+    const isLoadUser = loadUser === "true";
+
+    const scan = CourseModel.scan().where("published").eq(isPublished);
 
     if (query) {
       scan
@@ -37,7 +40,7 @@ export class CourseService {
 
     const courses = await scan.parallel(2).all().exec();
 
-    if (loadUser) {
+    if (isLoadUser) {
       await courses.populate();
     }
 

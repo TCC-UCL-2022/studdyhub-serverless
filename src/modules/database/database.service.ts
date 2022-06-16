@@ -1,5 +1,6 @@
 import * as dynamoose from "dynamoose";
 import { ModelType } from "dynamoose/dist/General";
+import { Item } from "dynamoose/dist/Item";
 import { Table, TableOptions } from "dynamoose/dist/Table";
 import { Logger } from "../../common/utils";
 import {
@@ -18,12 +19,12 @@ const defaultConfig: Partial<TableOptions> = {
 export class DatabaseService {
   private readonly logger = Logger.createLogger("Database");
 
-  private createModelTable(model: ModelType<any>): Table {
-    return new dynamoose.Table(model.tableName, [model], defaultConfig);
+  private createModelTable(model: ModelType<Item>): Table {
+    return new dynamoose.Table(model.name, [model], defaultConfig);
   }
 
   public createTables(): Table[] {
-    this.logger.info("Creating table");
+    this.logger.info("Creating tables");
 
     const models = [ActivityModel, CourseModel, EnrollmentModel, UserModel];
 

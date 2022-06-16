@@ -4,13 +4,12 @@ import { Item } from "dynamoose/dist/Item";
 import { Table, TableOptions } from "dynamoose/dist/Table";
 import { injectable } from "inversify";
 import { Logger } from "../../common/utils";
-import { environments } from "../../config/environment";
 import { CourseModel, EnrollmentModel, UserModel } from "../../models";
 
 const defaultConfig: Partial<TableOptions> = {
   initialize: false,
   create: true,
-  update: environments.NODE_ENV === "production" ? true : false,
+  update: false,
   prefix: "studdyhub_",
 };
 

@@ -89,19 +89,21 @@ export class CourseService {
 
   public async updateCourse(
     id: string,
-    course: UpdateCourseDto
+    payload: UpdateCourseDto
   ): Promise<Course | null> {
-    await this.getCourseById(id);
+    const course = await this.getCourseById(id);
 
-    const updated = await CourseModel.update({ id }, { ...course });
+    Object.assign(course, payload);
 
-    return updated;
+    await course.save();
+
+    return course;
   }
 
   public async deleteCourse(id: string): Promise<Course | null> {
     const course = await this.getCourseById(id);
 
-    await CourseModel.delete(id);
+    await course.delete();
 
     return course;
   }

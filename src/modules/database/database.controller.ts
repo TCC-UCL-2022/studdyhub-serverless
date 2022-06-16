@@ -14,11 +14,7 @@ export class DatabaseController {
     this.logger.debug("[initializeDatabase] invoked");
 
     try {
-      const databases = this.databaseService.createTables();
-
-      const promises = databases.map((database) => database.initialize());
-
-      await Promise.all(promises);
+      await this.databaseService.initializeTables();
 
       return MessageUtil.success("Database initialized");
     } catch (err) {

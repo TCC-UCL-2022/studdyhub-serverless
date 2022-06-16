@@ -19,17 +19,37 @@ const defaultConfig: Partial<TableOptions> = {
 export class DatabaseService {
   private readonly logger = Logger.createLogger("Database");
 
-  private createModelTable(model: ModelType<Item>): Table {
-    return new dynamoose.Table(model.name, [model], defaultConfig);
+  private createModelTable(
+    model: ModelType<Item>,
+    options?: Partial<TableOptions>
+  ): Table {
+    return new dynamoose.Table(model.name, [model], {
+      ...defaultConfig,
+      ...options,
+    });
   }
 
-  public createTables(): Table[] {
+  public async initializeTables(): Promise<void> {
     this.logger.info("Creating tables");
 
     const models = [ActivityModel, CourseModel, EnrollmentModel, UserModel];
 
     const tables = models.map((model) => this.createModelTable(model));
 
-    return tables;
+    const promises = tables.map((table) => table.initialize());
+
+    await Promise.all(promises);
+  }
+
+  public async initializeTableWihtoutCreating(
+    model: ModelType<Item>
+  ): Promise<void> {
+    this.logger.info(`Initializing table for model [${model.name}]`);
+
+    const table = this.createModelTable(model, {
+      create: false,
+      waitForActive: false,
+    });
+    await table.initialize();
   }
 }

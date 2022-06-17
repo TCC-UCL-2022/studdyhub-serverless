@@ -1,7 +1,7 @@
 name: Deploy API Serverless
 on:
   push:
-    branch: [master, felipeferrarini/change-database-to-dynamodb]
+    branch: [master]
 jobs:
   deploy-to-aws:
     runs-on: ubuntu-latest

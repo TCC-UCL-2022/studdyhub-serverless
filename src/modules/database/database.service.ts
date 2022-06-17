@@ -1,49 +1,59 @@
-import { DataSource, EntityTarget, Repository } from "typeorm";
-import { createDatabase } from "typeorm-extension";
+import * as dynamoose from "dynamoose";
+import { ModelType } from "dynamoose/dist/General";
+import { Item } from "dynamoose/dist/Item";
+import { Table, TableOptions } from "dynamoose/dist/Table";
+import { injectable } from "inversify";
 import { Logger } from "../../common/utils";
-import { dataSourceOptions } from "../../config/database";
+import { CourseModel, EnrollmentModel, UserModel } from "../../models";
 
+const defaultConfig: Partial<TableOptions> = {
+  initialize: false,
+  create: true,
+  update: false,
+  prefix: "studdyhub_",
+};
+
+@injectable()
 export class DatabaseService {
   private readonly logger = Logger.createLogger("Database");
-  private readonly dataSource = new DataSource(dataSourceOptions);
 
-  private async loadDatabase() {
+  private createModelTable(
+    model: ModelType<Item>,
+    options?: Partial<TableOptions>
+  ): Table {
+    return new dynamoose.Table(model.name, [model], {
+      ...defaultConfig,
+      ...options,
+    });
+  }
+
+  public async initializeTables(): Promise<void> {
+    this.logger.info("Creating tables");
+
+    const models = [CourseModel, EnrollmentModel, UserModel];
+
+    const tables = models.map((model) => this.createModelTable(model));
+
+    const promises = tables.map((table) => table.initialize());
+
+    await Promise.all(promises);
+  }
+
+  public async initializeTableWihtoutCreating(
+    model: ModelType<Item>
+  ): Promise<void> {
+    this.logger.info(`Initializing table for model [${model.name}]`);
+
     try {
-      this.logger.debug("Loading database...");
-      await createDatabase({
-        options: dataSourceOptions,
-        ifNotExist: true,
+      const table = this.createModelTable(model, {
+        create: false,
+        update: false,
+        waitForActive: false,
       });
-    } catch (err) {
-      this.logger.error("Failed to load database");
-    }
 
-    try {
-      this.logger.debug("Synchronizing database...");
-      await this.dataSource.synchronize();
+      await table.initialize();
     } catch (error) {
-      this.logger.error("Failed to synchronize database");
+      this.logger.error(`Failed to initialize table for model [${model.name}]`);
     }
-
-    try {
-      this.logger.debug("Initializing database");
-      await this.dataSource.initialize();
-    } catch (error) {
-      this.logger.error("Failed to initialize database");
-    }
-
-    this.logger.debug("Database loaded");
-  }
-
-  public async getEntityRepository<T>(
-    entity: EntityTarget<T>
-  ): Promise<Repository<T>> {
-    await this.loadDatabase();
-
-    return this.dataSource.getRepository(entity);
-  }
-
-  public async closeDatabaseConnection() {
-    await this.dataSource.destroy();
   }
 }

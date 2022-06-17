@@ -1,37 +1,28 @@
 import { S3EventRecord } from "aws-lambda";
 import { S3 } from "aws-sdk";
+import { injectable } from "inversify";
+import { ActivityType } from "../../common/enums";
 import { BadRequestError } from "../../common/errors";
+import { generateUuid } from "../../common/utils";
 import { environments } from "../../config/environment";
-import { Activity } from "../../entities";
+import { Activity } from "../../models";
 import { CourseService } from "../course";
 import { DatabaseService } from "../database";
+import { UserService } from "../user";
 import { CreateActivityDto } from "./dto";
 
 const s3Manager = new S3();
 
-export class ActivityService {
-  constructor(
-    private readonly databaseService: DatabaseService,
-    private readonly courseService: CourseService
-  ) {}
+@injectable()
+export class ActivityService extends CourseService {
+  constructor(userService: UserService, databaseService: DatabaseService) {
+    super(userService, databaseService);
+  }
 
   public async getCourseActivities(courseId: string): Promise<Activity[]> {
-    const activityRepository = await this.databaseService.getEntityRepository(
-      Activity
-    );
+    const course = await this.getCourseById(courseId);
 
-    const activities = await activityRepository.find({
-      where: {
-        active: true,
-        course: {
-          id: courseId,
-        },
-      },
-    });
-
-    await this.databaseService.closeDatabaseConnection();
-
-    return activities;
+    return course.activities;
   }
 
   private async moveVideoToProcessingBucket(
@@ -58,45 +49,38 @@ export class ActivityService {
 
   public async createCourseActivity(
     courseId: string,
-    activityPayload: CreateActivityDto
+    {
+      content,
+      title,
+      type = ActivityType.VIDEO,
+      description,
+    }: CreateActivityDto
   ): Promise<Activity> {
-    const course = await this.courseService.getCourseById(courseId);
+    const course = await this.getCourseById(courseId);
 
-    if (!course) {
-      throw new BadRequestError("Course not found");
+    const activity: Activity = {
+      id: generateUuid(),
+      content,
+      title,
+      type,
+      description,
+    };
+
+    if (type === "video") {
+      try {
+        const newContent = await this.moveVideoToProcessingBucket(activity);
+
+        activity.content = newContent;
+      } catch (err) {
+        throw new BadRequestError((err as Error).message);
+      }
     }
 
-    const activityRepository = await this.databaseService.getEntityRepository(
-      Activity
-    );
+    course.activities.push(activity);
 
-    const activity = new Activity();
-    Object.assign(activity, activityPayload);
+    await course.save();
 
-    activity.course = course;
-
-    const createdActivity = await activityRepository.save(activity);
-
-    try {
-      const newContent = await this.moveVideoToProcessingBucket(
-        createdActivity
-      );
-
-      await activityRepository.save({
-        ...createdActivity,
-        content: newContent,
-      });
-    } catch (err) {
-      await activityRepository.delete({
-        id: createdActivity.id,
-      });
-
-      throw new BadRequestError((err as Error).message);
-    }
-
-    await this.databaseService.closeDatabaseConnection();
-
-    return createdActivity;
+    return activity;
   }
 
   public activityPosProcessing = async (

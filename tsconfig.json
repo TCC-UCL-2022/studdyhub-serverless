@@ -5,6 +5,7 @@
     "module": "commonjs",
     "lib": ["ES6"],
     "strict": true,
+    "types": ["reflect-metadata"],
     "esModuleInterop": true,
     "emitDecoratorMetadata": true,
     "strictPropertyInitialization": false

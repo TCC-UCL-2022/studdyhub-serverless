@@ -1,16 +1,20 @@
-import { ConflictError, NotFoundError } from "../../common/errors";
-import { Enrollment } from "../../entities";
+import { injectable } from "inversify";
+import { ConflictError } from "../../common/errors";
+import { Enrollment, EnrollmentModel } from "../../models";
 import { CourseService } from "../course";
 import { DatabaseService } from "../database";
 import { UserService } from "../user";
 import { CreateEnrollmentDto } from "./dto";
 
+@injectable()
 export class EnrollmentService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly CourseService: CourseService,
     private readonly UserService: UserService
-  ) {}
+  ) {
+    this.databaseService.initializeTableWihtoutCreating(EnrollmentModel);
+  }
 
   public async createErollment({
     courseId,
@@ -19,56 +23,31 @@ export class EnrollmentService {
     const user = await this.UserService.getUserById(userId);
     const course = await this.CourseService.getCourseById(courseId);
 
-    if (!course) {
-      throw new NotFoundError(`Course with id ${courseId} not found`);
-    }
+    const existingEnrollment = await EnrollmentModel.scan("course")
+      .eq(courseId)
+      .and()
+      .where("user")
+      .eq(userId)
+      .exec();
 
-    const enrollmentRepository = await this.databaseService.getEntityRepository(
-      Enrollment
-    );
-
-    const existingEnrollment = await enrollmentRepository.findOne({
-      where: {
-        course: { id: courseId },
-        user: {
-          id: userId,
-        },
-      },
-    });
-
-    if (existingEnrollment) {
+    if (existingEnrollment.count > 0) {
       throw new ConflictError(
         `User with id ${userId} already enrolled in course with id ${courseId}`
       );
     }
 
-    const enrollment = new Enrollment();
-
-    enrollment.course = course;
-    enrollment.user = user;
-
-    const createdEnrollment = await enrollmentRepository.save(enrollment);
-
-    await this.databaseService.closeDatabaseConnection();
+    const createdEnrollment = await EnrollmentModel.create({
+      course,
+      user,
+    });
 
     return createdEnrollment;
   }
 
   public async getEnrollmentsByUserId(userId: string): Promise<Enrollment[]> {
-    const enrollmentRepository = await this.databaseService.getEntityRepository(
-      Enrollment
-    );
+    const enrollments = await EnrollmentModel.query("user").eq(userId).exec();
 
-    const enrollments = await enrollmentRepository.find({
-      where: {
-        user: {
-          id: userId,
-        },
-      },
-      relations: ["course"],
-    });
-
-    await this.databaseService.closeDatabaseConnection();
+    await enrollments.populate();
 
     return enrollments;
   }

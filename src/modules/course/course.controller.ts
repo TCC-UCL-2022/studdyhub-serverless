@@ -1,10 +1,12 @@
 import { Handler } from "aws-lambda";
+import { injectable } from "inversify";
 import { NotFoundError } from "../../common/errors";
 import { HandlerEvent } from "../../common/types";
 import { Logger, MessageUtil } from "../../common/utils";
 import { CourseService } from "./course.service";
 import { CreateCourseDto, GetCoursesRequestDto, UpdateCourseDto } from "./dto";
 
+@injectable()
 export class CourseController {
   private readonly logger: Logger;
 
@@ -50,6 +52,24 @@ export class CourseController {
       return MessageUtil.success(course);
     } catch (err) {
       this.logger.error("[getCourseById] failed:", err);
+
+      return MessageUtil.error(err);
+    }
+  };
+
+  getCoursesByUserId: Handler<HandlerEvent<{ id: string }>> = async (event) => {
+    try {
+      const { id } = event.pathParameters;
+
+      this.logger.debug("[getCoursesByUserId] invoked for userId:", id);
+
+      const courses = await this.courseService.getCoursesByUserId(id);
+
+      this.logger.debug(`[getCoursesByUserId] found ${courses.length} courses`);
+
+      return MessageUtil.success(courses);
+    } catch (err) {
+      this.logger.error("[getCoursesByUserId] failed:", err);
 
       return MessageUtil.error(err);
     }

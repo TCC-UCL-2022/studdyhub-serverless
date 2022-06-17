@@ -12,6 +12,13 @@ getCourseById:
         method: GET
         path: /courses/{id}
 
+getCoursesByUserId:
+  handler: src/functions/courses/handler.getCoursesByUserId
+  events:
+    - httpApi:
+        method: GET
+        path: /courses/user/{id}
+
 createCourse:
   handler: src/functions/courses/handler.createCourse
   events:

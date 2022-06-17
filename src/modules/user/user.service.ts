@@ -1,80 +1,58 @@
-import { NotFoundError } from "../../common/errors";
-import { User } from "../../entities";
+import { injectable } from "inversify";
+import { ConflictError, NotFoundError } from "../../common/errors";
+import { User, UserModel } from "../../models";
 import { DatabaseService } from "../database";
 import { CreateUserDto } from "./dto";
 
+@injectable()
 export class UserService {
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(private readonly databaseService: DatabaseService) {
+    this.databaseService.initializeTableWihtoutCreating(UserModel);
+  }
 
   public async getUserByCognitoId(cognitoId: string): Promise<User> {
-    const userRepository = await this.databaseService.getEntityRepository(User);
+    const result = await UserModel.query("cognitoId").eq(cognitoId).exec();
 
-    const user = await userRepository.findOne({
-      where: {
-        cognitoId,
-        active: true,
-      },
-    });
-
-    if (!user) {
+    if (!result.length) {
       throw new NotFoundError("User not found");
     }
 
-    await this.databaseService.closeDatabaseConnection();
-
-    return user;
+    return result[0];
   }
 
   public async getUserById(id: string): Promise<User> {
-    const userRepository = await this.databaseService.getEntityRepository(User);
+    const user = await UserModel.query({
+      id,
+    }).exec();
 
-    const user = await userRepository.findOne({
-      where: {
-        id,
-        active: true,
-      },
-    });
-
-    if (!user) {
+    if (!user.length) {
       throw new NotFoundError("User not found");
     }
 
-    await this.databaseService.closeDatabaseConnection();
-
-    return user;
+    return user[0];
   }
 
-  public async createUser(payload: CreateUserDto): Promise<User> {
-    const userRepository = await this.databaseService.getEntityRepository(User);
+  public async createUser({
+    cognitoId,
+    email,
+    name,
+    role,
+  }: CreateUserDto): Promise<User> {
+    const existingUser = await UserModel.query("cognitoId")
+      .eq(cognitoId)
+      .exec();
 
-    const user = await userRepository.create(payload).save();
-
-    await this.databaseService.closeDatabaseConnection();
-
-    return user;
-  }
-
-  public async updateUser(id: string, user: Partial<User>): Promise<User> {
-    const userRepository = await this.databaseService.getEntityRepository(User);
-
-    const existingUser = await userRepository.findOne({
-      where: {
-        id,
-        active: true,
-      },
-    });
-
-    if (!existingUser) {
-      throw new NotFoundError("User not found");
+    if (existingUser.length > 0) {
+      throw new ConflictError("User already exists");
     }
 
-    const updated = await userRepository.save({
-      ...existingUser,
-      ...user,
+    const user = await UserModel.create({
+      cognitoId,
+      email,
+      name,
+      role,
     });
 
-    await this.databaseService.closeDatabaseConnection();
-
-    return updated;
+    return user;
   }
 }

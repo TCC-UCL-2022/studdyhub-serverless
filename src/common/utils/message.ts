@@ -18,6 +18,11 @@ class Result {
     return {
       statusCode: this.statusCode,
       body: JSON.stringify(this.data),
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Credentials": true,
+      },
     };
   }
 }

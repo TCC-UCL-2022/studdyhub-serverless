@@ -17,6 +17,23 @@ provider:
         - "arn:aws:s3:::video-uploads212329-dev/*"
         - "arn:aws:s3:::studdyhub-video-input/*"
         - "arn:aws:s3:::studdyhub-video-output/*"
+    - Effect: Allow
+      Action:
+        - dynamodb:DescribeTable
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+        - dynamodb:CreateTable
+        - dynamodb:UpdateTable
+        - dynamodb:UpdateTimeToLive
+        - dynamodb:DescribeTimeToLive
+        - dynamodb:ListTagsOfResource
+        - dynamodb:TagResource
+        - dynamodb:UntagResource
+      Resource: "*"
 
 plugins:
   - serverless-plugin-typescript
@@ -27,3 +44,4 @@ functions:
   - ${file(./src/functions/users/serverless.yml)}
   - ${file(./src/functions/activities/serverless.yml)}
   - ${file(./src/functions/enrollments/serverless.yml)}
+  - ${file(./src/functions/database/serverless.yml)}

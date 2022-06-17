@@ -1,4 +1,7 @@
-import { activityController } from "../../modules/factory";
+import container from "../../container";
+import { ActivityController } from "../../modules/activity";
+
+const activityController = container.resolve(ActivityController);
 
 export const {
   createCourseActivity,

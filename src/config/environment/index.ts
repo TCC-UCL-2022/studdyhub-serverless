@@ -9,11 +9,8 @@ function getEnvironmentVariable(name: string): string {
 }
 
 export const environments = {
-  DB_HOST: getEnvironmentVariable("DB_HOST"),
-  DB_PORT: Number(getEnvironmentVariable("DB_PORT")),
-  DB_NAME: getEnvironmentVariable("DB_NAME"),
-  DB_USERNAME: getEnvironmentVariable("DB_USERNAME"),
-  DB_PASSWORD: getEnvironmentVariable("DB_PASSWORD"),
+  NODE_ENV: getEnvironmentVariable("NODE_ENV"),
+  DB_URL: getEnvironmentVariable("DB_URL"),
   S3_FRONTEND_UPLOAD_BUCKET: getEnvironmentVariable(
     "S3_FRONTEND_UPLOAD_BUCKET"
   ),

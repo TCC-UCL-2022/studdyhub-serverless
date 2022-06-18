@@ -3,4 +3,5 @@ import { UserController } from "../../modules/user";
 
 const userController = container.resolve(UserController);
 
-export const { createUser, getUserByCognitoId } = userController;
+export const { createUser, getUserByCognitoId, deleteUser, updateUser } =
+  userController;

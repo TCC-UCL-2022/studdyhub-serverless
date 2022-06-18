@@ -11,3 +11,17 @@ getUserByCognitoId:
     - httpApi:
         method: GET
         path: /users/{id}
+
+updateUser:
+  handler: src/functions/users/handler.updateUser
+  events:
+    - httpApi:
+        method: PATCH
+        path: /users/{id}
+
+deleteUser:
+  handler: src/functions/users/handler.deleteUser
+  events:
+    - httpApi:
+        method: DELETE
+        path: /users/{id}

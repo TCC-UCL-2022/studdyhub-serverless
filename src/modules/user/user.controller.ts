@@ -2,7 +2,7 @@ import { Handler } from "aws-lambda";
 import { injectable } from "inversify";
 import { HandlerEvent } from "../../common/types";
 import { Logger, MessageUtil } from "../../common/utils";
-import { CreateUserDto } from "./dto";
+import { CreateUserDto, UpdateUserDto } from "./dto";
 import { UserService } from "./user.service";
 
 @injectable()
@@ -44,6 +44,43 @@ export class UserController {
       return MessageUtil.success(user);
     } catch (err) {
       this.logger.error("[createUser] failed:", err);
+
+      return MessageUtil.error(err);
+    }
+  };
+
+  updateUser: Handler<HandlerEvent<{ id: string }>> = async (event) => {
+    this.logger.debug("[updateUser] invoked");
+
+    try {
+      const { id } = event.pathParameters;
+      const payload: UpdateUserDto = JSON.parse(event.body);
+
+      const user = await this.userService.updateUser(id, payload);
+
+      this.logger.debug("[updateUser] updated user:", user.id);
+
+      return MessageUtil.success(user);
+    } catch (err) {
+      this.logger.error("[updateUser] failed:", err);
+
+      return MessageUtil.error(err);
+    }
+  };
+
+  deleteUser: Handler<HandlerEvent<{ id: string }>> = async (event) => {
+    this.logger.debug("[deleteUser] invoked");
+
+    try {
+      const { id } = event.pathParameters;
+
+      const user = await this.userService.deleteUser(id);
+
+      this.logger.debug("[deleteUser] deleted course:", user.id);
+
+      return MessageUtil.success(user);
+    } catch (err) {
+      this.logger.error("[deleteUser] failed:", err);
 
       return MessageUtil.error(err);
     }

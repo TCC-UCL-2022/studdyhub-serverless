@@ -2,7 +2,7 @@ import { injectable } from "inversify";
 import { ConflictError, NotFoundError } from "../../common/errors";
 import { User, UserModel } from "../../models";
 import { DatabaseService } from "../database";
-import { CreateUserDto } from "./dto";
+import { CreateUserDto, UpdateUserDto } from "./dto";
 
 @injectable()
 export class UserService {
@@ -21,15 +21,13 @@ export class UserService {
   }
 
   public async getUserById(id: string): Promise<User> {
-    const user = await UserModel.query({
-      id,
-    }).exec();
+    const user = await UserModel.get(id);
 
-    if (!user.length) {
+    if (!user) {
       throw new NotFoundError("User not found");
     }
 
-    return user[0];
+    return user;
   }
 
   public async createUser({
@@ -52,6 +50,27 @@ export class UserService {
       name,
       role,
     });
+
+    return user;
+  }
+
+  async updateUser(
+    userId: string,
+    { email, name, role }: UpdateUserDto
+  ): Promise<User> {
+    const user = await this.getUserById(userId);
+
+    Object.assign(user, { email, name, role });
+
+    await user.save();
+
+    return user;
+  }
+
+  async deleteUser(userId: string): Promise<User> {
+    const user = await this.getUserById(userId);
+
+    await user.delete();
 
     return user;
   }

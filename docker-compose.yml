@@ -7,4 +7,4 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./dynamodb-data:/home/ubuntu/dynamodb
+      - ./dynamodb-data:/var/lib/dynamodb/data

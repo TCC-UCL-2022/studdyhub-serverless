@@ -1,4 +1,4 @@
-import container from "../../container";
+import { container } from "../../container";
 import { CourseController } from "../../modules/course";
 
 const courseController = container.resolve(CourseController);

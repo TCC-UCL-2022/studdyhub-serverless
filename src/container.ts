@@ -26,4 +26,4 @@ container.bind<DatabaseController>(DatabaseController).toSelf();
 container.bind<EnrollmentController>(EnrollmentController).toSelf();
 container.bind<UserController>(UserController).toSelf();
 
-export default container;
+export { container };

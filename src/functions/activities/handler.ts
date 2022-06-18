@@ -1,4 +1,4 @@
-import container from "../../container";
+import { container } from "../../container";
 import { ActivityController } from "../../modules/activity";
 
 const activityController = container.resolve(ActivityController);

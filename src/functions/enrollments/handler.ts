@@ -1,4 +1,4 @@
-import container from "../../container";
+import { container } from "../../container";
 import { EnrollmentController } from "../../modules/enrollment";
 
 const enrollmentController = container.resolve(EnrollmentController);

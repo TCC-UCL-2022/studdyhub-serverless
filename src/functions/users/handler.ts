@@ -1,4 +1,4 @@
-import container from "../../container";
+import { container } from "../../container";
 import { UserController } from "../../modules/user";
 
 const userController = container.resolve(UserController);

@@ -13,10 +13,10 @@ provider:
         - s3:*Bucket
         - s3:*Object
       Resource:
-        - "arn:aws:s3:::video-uploads00925-production/*"
-        - "arn:aws:s3:::video-uploads212329-dev/*"
-        - "arn:aws:s3:::studdyhub-video-input/*"
-        - "arn:aws:s3:::studdyhub-video-output/*"
+        - "arn:aws:s3:::studdyhub-videos165822-production/*"
+        - "arn:aws:s3:::studdyhub-videos154253-dev/*"
+        - "arn:aws:s3:::video-convert-input-studdyhub/*"
+        - "arn:aws:s3:::video-convert-output-studdyhub/*"
     - Effect: Allow
       Action:
         - dynamodb:DescribeTable

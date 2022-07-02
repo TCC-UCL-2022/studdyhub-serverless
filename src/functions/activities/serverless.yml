@@ -18,7 +18,7 @@ activityPosProcessing:
   handler: src/functions/activities/handler.activityPosProcessing
   events:
     - s3:
-        bucket: studdyhub-video-output
+        bucket: video-convert-output-studdyhub
         event: s3:ObjectCreated:*
         rules:
           - suffix: .mp4

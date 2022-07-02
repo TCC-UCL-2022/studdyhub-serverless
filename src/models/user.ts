@@ -32,7 +32,6 @@ const schema = new dynamoose.Schema(
     email: {
       type: String,
       required: true,
-      validate: /.+@.+/gu,
     },
     role: {
       type: String,

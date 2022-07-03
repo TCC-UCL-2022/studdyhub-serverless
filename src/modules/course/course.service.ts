@@ -1,6 +1,7 @@
 import { injectable } from "inversify";
 import { GetManyResponseDto } from "../../common/dto";
 import { BadRequestError, NotFoundError } from "../../common/errors";
+import { generateUuid } from "../../common/utils";
 import { Course, CourseModel } from "../../models";
 import { DatabaseService } from "../database";
 import { UserService } from "../user";
@@ -82,6 +83,7 @@ export class CourseService {
     }
 
     const courseCreated = await CourseModel.create({
+      id: generateUuid(),
       title,
       description,
       user,

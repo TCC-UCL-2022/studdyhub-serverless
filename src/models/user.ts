@@ -1,7 +1,6 @@
 import * as dynamoose from "dynamoose";
 import { Roles } from "../common/enums";
 import { BaseModel } from "../common/model/base-model";
-import { generateUuid } from "../common/utils";
 
 export class User extends BaseModel {
   cognitoId: string;
@@ -15,8 +14,7 @@ const schema = new dynamoose.Schema(
     id: {
       type: String,
       hashKey: true,
-      default: generateUuid(),
-      forceDefault: true,
+      required: true,
     },
     cognitoId: {
       type: String,

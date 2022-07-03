@@ -1,7 +1,6 @@
 import * as dynamoose from "dynamoose";
 import { ActivityType } from "../common/enums";
 import { BaseModel } from "../common/model/base-model";
-import { generateUuid } from "../common/utils";
 import { User, UserModel } from "./user";
 
 export interface Activity {
@@ -48,7 +47,6 @@ const schema = new dynamoose.Schema(
       type: String,
       hashKey: true,
       required: true,
-      default: generateUuid(),
     },
     title: {
       type: String,

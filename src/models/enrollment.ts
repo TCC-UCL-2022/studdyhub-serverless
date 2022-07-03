@@ -1,6 +1,5 @@
 import * as dynamoose from "dynamoose";
 import { BaseModel } from "../common/model/base-model";
-import { generateUuid } from "../common/utils";
 import { Course, CourseModel } from "./course";
 import { User, UserModel } from "./user";
 
@@ -14,8 +13,7 @@ const schema = new dynamoose.Schema(
     id: {
       type: String,
       hashKey: true,
-      default: generateUuid(),
-      forceDefault: true,
+      required: true,
     },
     course: {
       type: CourseModel,

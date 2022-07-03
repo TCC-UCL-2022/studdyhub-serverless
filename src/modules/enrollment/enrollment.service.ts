@@ -1,5 +1,6 @@
 import { injectable } from "inversify";
 import { ConflictError } from "../../common/errors";
+import { generateUuid } from "../../common/utils";
 import { Enrollment, EnrollmentModel } from "../../models";
 import { CourseService } from "../course";
 import { DatabaseService } from "../database";
@@ -37,6 +38,7 @@ export class EnrollmentService {
     }
 
     const createdEnrollment = await EnrollmentModel.create({
+      id: generateUuid(),
       course,
       user,
     });

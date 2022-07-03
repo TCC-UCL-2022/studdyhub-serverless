@@ -1,5 +1,6 @@
 import { injectable } from "inversify";
 import { ConflictError, NotFoundError } from "../../common/errors";
+import { generateUuid } from "../../common/utils";
 import { User, UserModel } from "../../models";
 import { DatabaseService } from "../database";
 import { CreateUserDto, UpdateUserDto } from "./dto";
@@ -45,6 +46,7 @@ export class UserService {
     }
 
     const user = await UserModel.create({
+      id: generateUuid(),
       cognitoId,
       email,
       name,
